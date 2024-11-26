@@ -4,7 +4,7 @@ login ve sign up yapıldı ikisi arasında küçük farklar var hangisi daha gü
 
 npm install
 
-npm install bootstrap react-bootstrap
+npm install react-bootstrap bootstrap 
 
 npm install react-router-dom
 
