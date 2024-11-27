@@ -5,10 +5,12 @@ import Sidebar from './sidebar';
 
 const Layout = () => {
   return (
-    <div className="d-flex">
+    <div className="full-screen" style={{backgroundColor: "whitesmoke"}}>
       <Sidebar />
-      <div className="flex-grow-1 p-4">
+      <div className="contentContainer">
+      <div className="contentCard">
         <Outlet /> {/* Render the active route content here */}
+      </div>
       </div>
     </div>
   );
