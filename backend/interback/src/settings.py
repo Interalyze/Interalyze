@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'ai_processing',
 ]
 
 MIDDLEWARE = [
@@ -76,8 +77,10 @@ WSGI_APPLICATION = 'src.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # Use the PostgreSQL backend
-        'NAME': 'interdb',              # Replace with your database name
+        # 'ENGINE': 'django.db.backends.postgresql',  # Use the PostgreSQL backend
+        'ENGINE': 'django.db.backends.sqlite3',  
+        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'NAME': 'interdb',              # Replace with your database name
         'USER': 'postgres',                   # Replace with your username
         'PASSWORD': 'alp68ece',               # Replace with your password
         'HOST': 'localhost',                       
