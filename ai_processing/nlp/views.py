@@ -1,5 +1,7 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+
+from ai_processing.nlp.stress_analysis.stress_analysis_model import StressAnalyzer
 from .skills_analysis.skills_analysis_model import AllSkillsAnalyzer, SkillAnalyzer
 from ai_processing.nlp.personality_analysis.personality_analysis_model import PersonalityAnalyzer
 from .personality_analysis.bert_personality_model import BERTPersonalityAnalyzer
@@ -116,6 +118,33 @@ def analyze_soft_skills(request):
 
             # Return the extracted soft skills
             return JsonResponse({"soft_skills": soft_skills}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+def analyze_stress(request):
+    """
+    API endpoint to analyze stress levels based on the provided text.
+    """
+    if request.method == "POST":
+        try:
+            # Parse the input text from the request body
+            body = json.loads(request.body)
+            input_text = body.get("text", "")
+
+            if not input_text:
+                return JsonResponse({"error": "No text provided"}, status=400)
+
+            # Initialize the classifier and get results
+            classifier = StressAnalyzer()
+            results = classifier.classify_stress(input_text)
+
+            # Return the stress analysis predictions
+            return JsonResponse({"stress_analysis": results}, status=200)
 
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)

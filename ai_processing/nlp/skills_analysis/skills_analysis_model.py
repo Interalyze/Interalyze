@@ -75,7 +75,6 @@ class SkillAnalyzer:
             if skill_data.get("skill_type") == "Soft Skill":
                 soft_skills.append({
                     "skill_name": skill["doc_node_value"],
-                    "confidence": round(float(skill["score"]), 2)
                 })
 
         return soft_skills

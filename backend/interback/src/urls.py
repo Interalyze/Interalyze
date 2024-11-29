@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from ai_processing.nlp.views import analyze_bert_personality, analyze_personality, analyze_skills, analyze_soft_skills
+from ai_processing.nlp.views import analyze_bert_personality, analyze_personality, analyze_skills, analyze_soft_skills, analyze_stress
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,5 +25,6 @@ urlpatterns = [
     path("api/analyze-personality/", analyze_personality, name="analyze_personality"),
     path("api/soft-skills-analysis/", analyze_soft_skills, name="analyze_soft-skills"),
     path("api/skills-analysis/", analyze_skills, name="analyze_skills"),
+    path("api/analyze-stress", analyze_stress, name="analyze_stress"),
 ]
 
