@@ -41,18 +41,18 @@ const Sidebar = () => {
             className="btn-link"
             onClick={() => toggleCollapse('network')}
           >
-            Network
+            Candidates
           </button>
           <div className={`collapse ${activeCollapse === 'network' ? 'show' : ''}`}>
             <ul className="list-unstyled ps-3">
               <li>
-                <Link className="nav-link" to="/network/get-started">Get Started</Link>
+                <Link className="nav-link" to="/Candidate">Candidate Dashboard</Link>
               </li>
               <li>
-                <Link className="nav-link" to="/network/user-cards">User Cards</Link>
+                <Link className="nav-link" to="/Candidate/CreateCandidate">User Cards</Link>
               </li>
               <li>
-                <Link className="nav-link" to="/network/user-table">User Table</Link>
+                <Link className="nav-link" to="/Candidate">User Table</Link>
               </li>
             </ul>
           </div>

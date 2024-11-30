@@ -11,6 +11,7 @@ import AuthPage from './pages/authPage';
 //import DataLab from './pages/dataLab';
 import Layout from './components/layout'; // Sidebar layout wrapper
 import ChangeUserDetailsPage from './pages/changeUserDetailsPage';
+import FileUpload from './pages/fileUpload';
 import VideoPlayer from './pages/videoPlayer';
 
 const App = () => {
@@ -25,6 +26,10 @@ const App = () => {
           <Route index element={<MainPage />} /> {/* Default page under MainPage */}
           <Route path="/MainPage/ChangeUserDetails" element={<ChangeUserDetailsPage />}/>
           <Route path= "/MainPage/Videoview" element={<VideoPlayer/>}/>
+        </Route>
+        <Route path="/Candidate" element={<Layout />}>
+          <Route index element={<MainPage />} /> {/* Default page under MainPage */}
+          <Route path="/Candidate/CreateCandidate" element={<FileUpload/>}/>
 
 
         </Route>

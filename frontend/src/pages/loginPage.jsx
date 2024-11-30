@@ -21,7 +21,7 @@ const LoginPage = ({ toggleForm }) => {
 
     try {
       // Make API request to the backend
-      const response = await fetch('/api/users/login/', {
+      const response = await fetch('http://127.0.0.1:8000/api/users/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,37 +58,31 @@ const LoginPage = ({ toggleForm }) => {
   return (
     <FormContainer title="Sign In">
       <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="formEmail">
-          <Form.Label className="otherText">Email</Form.Label>
-          <Form.Control
-            className="textInput"
-            type="email"
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group controlId="formPassword">
-          <Form.Label className="otherText">Password</Form.Label>
-          <Form.Control
-            className="textInput"
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </Form.Group>
-        <Button variant="primary" className="outputButton" type="submit">
-          Sign In
-        </Button>
-
-        {errorMessage && (
-          <Alert variant="danger" className="textInput">
-            {errorMessage}
-          </Alert>
-        )}
-      </Form>
-      <p>
+            <Form.Group controlId="formEmail" >
+              <Form.Control
+              className="textInput"
+                type="email"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="formPassword" >
+              <Form.Control
+                className="textInput"
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </Form.Group>
+            <Button variant="primary" className="outputButton" type="submit">
+              Sign In
+            </Button>
+            
+      {errorMessage && <Alert variant="danger" className='textInput' style={{}} >{errorMessage}</Alert>}
+          </Form>
+          <p>
         Need an account?{' '}
         <a className="blue-link" onClick={toggleForm}>
           Sign up

@@ -40,11 +40,13 @@ INSTALLED_APPS = [
     'users',
     'rest_framework',
     'video_play',
+    'corsheaders',  # Added corsheaders app
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Added CorsMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -79,9 +81,9 @@ WSGI_APPLICATION = 'src.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',  # Use the PostgreSQL backend
-        'NAME': 'interdb',              # Replace with your database name
+        'NAME': 'Interalyze',              # Replace with your database name
         'USER': 'postgres',                   # Replace with your username
-        'PASSWORD': 'alp68ece',               # Replace with your password
+        'PASSWORD': 'artun',               # Replace with your password
         'HOST': 'localhost',                       
         'PORT': '5433',                            # Default PostgreSQL port
     }
@@ -128,3 +130,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CORS Configuration
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # React development server
+    "http://127.0.0.1:3000",
+]
+
+# Allow credentials (optional, only if required)
+CORS_ALLOW_CREDENTIALS = True

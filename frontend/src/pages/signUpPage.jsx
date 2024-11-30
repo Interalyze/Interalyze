@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+
+import { Form, Button, Alert } from 'react-bootstrap';
 import FormContainer from '../components/formContainer';
 
 const SignUpPage = ({ toggleForm }) => {
@@ -27,7 +29,7 @@ const SignUpPage = ({ toggleForm }) => {
 
     try {
       // Make API request to the backend
-      const response = await fetch('/api/users/signup/', {
+      const response = await fetch('http://127.0.0.1:8000/api/users/signup/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -63,42 +65,45 @@ const SignUpPage = ({ toggleForm }) => {
 
   return (
     <FormContainer title="Sign Up">
-      <form onSubmit={handleSubmit}>
-        {errorMessage && <p className="alert error">{errorMessage}</p>}
-        {successMessage && <p className="alert success">{successMessage}</p>}
-        <label className="otherText">Email</label>
-        <input
-          className="textInput"
-          type="email"
-          placeholder="Enter email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <label className="otherText">Password</label>
-        <input
-          className="textInput"
-          type="password"
-          placeholder="Enter password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <label className="otherText">Confirm Password</label>
-        <input
-          className="textInput"
-          type="password"
-          placeholder="Re-enter password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        <button className="outputButton" type="submit">
-          Sign Up
-        </button>
-      </form>
-      <p>
+      <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="formEmail" >
+              <Form.Control
+              className="textInput"
+                type="email"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="formPassword" >
+              <Form.Control
+                className="textInput"
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="formConfirmPassword" >
+              <Form.Control
+                className="textInput"
+                type="password"
+                placeholder="Enter password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </Form.Group>
+            <Button variant="primary" className="outputButton" type="submit">
+              Sign Up
+            </Button>
+            
+      {errorMessage && <Alert variant="danger" className='textInput' style={{}} >{errorMessage}</Alert>}
+          </Form>
+          <p>
         Already have an account?{' '}
-        <button onClick={toggleForm} className="linkButton">
+        <a className="blue-link" onClick={toggleForm}>
           Sign in
-        </button>
+        </a>
       </p>
     </FormContainer>
   );

@@ -3,11 +3,16 @@ import React from 'react';
 const FormContainer = ({ title, children }) => {
   return (
     <div className="form-section">
-              <img 
-          src={"Logo1.png"} 
+      <div style = {{paddingLeft: 3}}>
+      <img 
+          src={"output-onlinepngtools.png"} 
           alt="Form Logo" 
           className="form-image" 
         />
+
+
+      </div>
+              
       <div className="custom-form-container">
 
         <h2 className="center-text" style={{fontWeight: "bolder"}} >{title}</h2>
