@@ -139,3 +139,4 @@ CORS_ALLOWED_ORIGINS = [
 
 # Allow credentials (optional, only if required)
 CORS_ALLOW_CREDENTIALS = True
+LOGIN_REDIRECT_URL = '/'

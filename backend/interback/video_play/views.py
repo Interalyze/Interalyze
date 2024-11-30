@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from django.contrib.auth.decorators import login_required
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from google.oauth2.service_account import Credentials
@@ -11,7 +11,7 @@ CREDENTIALS_PATH = "../../credentials.json"
 # Define Google Drive credentials and scope
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 
-
+@login_required
 def stream_google_drive_video(request, file_id ): 
     # Authenticate with Google Drive API
     drive_service = build('drive', 'v3', credentials=credentials)
