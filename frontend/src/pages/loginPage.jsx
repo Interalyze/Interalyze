@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import FormContainer from '../components/formContainer';
 import { Form, Button, Alert } from 'react-bootstrap';
-import { Navigate, Route, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = ({ toggleForm }) => {
   // State for email and password
@@ -9,7 +9,8 @@ const LoginPage = ({ toggleForm }) => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Simple validation
@@ -18,10 +19,40 @@ const LoginPage = ({ toggleForm }) => {
       return;
     }
 
-    // Handle login logic here
-    console.log('Logging in with:', { email, password });
-    setErrorMessage(''); // Clear error message after successful validation
-    navigate('/MainPage');
+    try {
+      // Make API request to the backend
+      const response = await fetch('/api/users/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Login successful:', data);
+
+        // Clear form fields and error message
+        setEmail('');
+        setPassword('');
+        setErrorMessage('');
+
+        // Redirect to MainPage
+        navigate('/MainPage');
+      } else {
+        const errorData = await response.json();
+        setErrorMessage(
+          errorData.non_field_errors || 'Invalid email or password.'
+        );
+      }
+    } catch (error) {
+      // Handle network or other errors
+      setErrorMessage('Unable to connect to the server. Please try again later.');
+    }
   };
 
   return (

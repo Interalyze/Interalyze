@@ -28,6 +28,9 @@ const Sidebar = () => {
               <li>
                 <Link className="nav-link" to="/Mainpage/ChangeUserDetails">Edit Profile</Link>
               </li>
+              <li>
+                <Link className="nav-link" to="/Mainpage/Videoview">Edit Profile</Link>
+              </li>
             </ul>
           </div>
         </li>

@@ -12,6 +12,7 @@ import AuthPage from './pages/authPage';
 import Layout from './components/layout'; // Sidebar layout wrapper
 import ChangeUserDetailsPage from './pages/changeUserDetailsPage';
 import FileUpload from './pages/fileUpload';
+import VideoPlayer from './pages/videoPlayer';
 
 const App = () => {
   return (
@@ -24,10 +25,13 @@ const App = () => {
         <Route path="/MainPage" element={<Layout />}>
           <Route index element={<MainPage />} /> {/* Default page under MainPage */}
           <Route path="/MainPage/ChangeUserDetails" element={<ChangeUserDetailsPage />}/>
+          <Route path= "/MainPage/Videoview" element={<VideoPlayer/>}/>
         </Route>
         <Route path="/Candidate" element={<Layout />}>
           <Route index element={<MainPage />} /> {/* Default page under MainPage */}
           <Route path="/Candidate/CreateCandidate" element={<FileUpload/>}/>
+
+
         </Route>
 
         {/* Fallback for undefined routes */}
