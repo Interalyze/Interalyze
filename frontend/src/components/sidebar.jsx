@@ -29,7 +29,7 @@ const Sidebar = () => {
                 <Link className="nav-link" to="/Mainpage/ChangeUserDetails">Edit Profile</Link>
               </li>
               <li>
-                <Link className="nav-link" to="/Mainpage/Videoview">Edit Profile</Link>
+                <Link className="nav-link" to="/Mainpage/Videoview">View a Video</Link>
               </li>
             </ul>
           </div>
@@ -49,7 +49,7 @@ const Sidebar = () => {
                 <Link className="nav-link" to="/Candidate">Candidate Dashboard</Link>
               </li>
               <li>
-                <Link className="nav-link" to="/Candidate/CreateCandidate">User Cards</Link>
+                <Link className="nav-link" to="/Candidate/CreateCandidate">Create Candidates</Link>
               </li>
               <li>
                 <Link className="nav-link" to="/Candidate">User Table</Link>

@@ -13,6 +13,7 @@ SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 
 
 def stream_google_drive_video(request, file_id ): 
+    print(file_id)
     # Authenticate with Google Drive API
     drive_service = build('drive', 'v3', credentials=credentials)
     credentials = Credentials.from_service_account_file(CREDENTIALS_PATH, scopes=SCOPES)
