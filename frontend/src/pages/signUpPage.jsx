@@ -29,7 +29,7 @@ const SignUpPage = ({ toggleForm }) => {
 
     try {
       // Make API request to the backend
-      const response = await fetch('/api/users/signup/', {
+      const response = await fetch('http://127.0.0.1:8000/api/users/signup/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
