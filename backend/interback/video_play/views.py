@@ -1,3 +1,5 @@
+from django.shortcuts import render
+
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from google.oauth2.service_account import Credentials
@@ -16,7 +18,7 @@ def stream_google_drive_video(request, file_id ):
     credentials = Credentials.from_service_account_file(CREDENTIALS_PATH, scopes=SCOPES)
     
     # Get file metadata
-    request_metadata = drive_service.files().get(fileId="P61", fields='name,mimeType').execute() #hardcoded for testing
+    request_metadata = drive_service.files().get(fileId=file_id, fields='name,mimeType').execute() #hardcoded for testing
     file_name = request_metadata.get('name')
     mime_type = request_metadata.get('mimeType')
 
@@ -35,3 +37,4 @@ def stream_google_drive_video(request, file_id ):
     response = StreamingHttpResponse(buffer, content_type=mime_type)
     response['Content-Disposition'] = f'inline; filename="{file_name}"'
     return response
+

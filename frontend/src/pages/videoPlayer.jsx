@@ -16,7 +16,7 @@ const VideoPlayer = ({ fileId }) => {
   return (
     <div>
       {videoUrl ? (
-        <ReactPlayer url={videoUrl} controls={true} />
+        <ReactPlayer url={"https://drive.google.com/file/d/164LMpsVOmUkFBowrAfgREzTcemgJGysA/view?usp=sharing"} controls={true} />
       ) : (
         <p>Loading video...</p>
       )}
