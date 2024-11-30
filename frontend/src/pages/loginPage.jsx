@@ -28,7 +28,6 @@ const LoginPage = ({ toggleForm }) => {
     <FormContainer title="Sign In">
       <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formEmail" >
-              <Form.Label className='otherText'>Email</Form.Label>
               <Form.Control
               className="textInput"
                 type="email"
@@ -38,7 +37,6 @@ const LoginPage = ({ toggleForm }) => {
               />
             </Form.Group>
             <Form.Group controlId="formPassword" >
-              <Form.Label className='otherText'>Password</Form.Label>
               <Form.Control
                 className="textInput"
                 type="password"

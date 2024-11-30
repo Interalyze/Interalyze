@@ -9,13 +9,13 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="d-flex flex-column bg-light vh-100 p-3" style={{ width: '250px' }}>
-      <h4>MetronicCloud</h4>
+    <div className="sidebar">
+      <h4>Interalyze</h4>
       <ul className="nav flex-column">
         {/* Public Profile */}
         <li className="nav-item">
           <button
-            className="btn btn-link text-start w-100"
+            className="btn-link"
             onClick={() => toggleCollapse('profile')}
           >
             Public Profile
@@ -23,10 +23,10 @@ const Sidebar = () => {
           <div className={`collapse ${activeCollapse === 'profile' ? 'show' : ''}`}>
             <ul className="list-unstyled ps-3">
               <li>
-                <Link className="nav-link" to="/profile/view">View Profile</Link>
+                <Link className="nav-link" to="/Mainpage">Main Page</Link>
               </li>
               <li>
-                <Link className="nav-link" to="/profile/edit">Edit Profile</Link>
+                <Link className="nav-link" to="/Mainpage/ChangeUserDetails">Edit Profile</Link>
               </li>
             </ul>
           </div>
@@ -35,21 +35,21 @@ const Sidebar = () => {
         {/* Network */}
         <li className="nav-item">
           <button
-            className="btn btn-link text-start w-100"
+            className="btn-link"
             onClick={() => toggleCollapse('network')}
           >
-            Network
+            Candidates
           </button>
           <div className={`collapse ${activeCollapse === 'network' ? 'show' : ''}`}>
             <ul className="list-unstyled ps-3">
               <li>
-                <Link className="nav-link" to="/network/get-started">Get Started</Link>
+                <Link className="nav-link" to="/Candidate">Candidate Dashboard</Link>
               </li>
               <li>
-                <Link className="nav-link" to="/network/user-cards">User Cards</Link>
+                <Link className="nav-link" to="/Candidate/CreateCandidate">User Cards</Link>
               </li>
               <li>
-                <Link className="nav-link" to="/network/user-table">User Table</Link>
+                <Link className="nav-link" to="/Candidate">User Table</Link>
               </li>
             </ul>
           </div>
@@ -58,7 +58,7 @@ const Sidebar = () => {
         {/* Data Lab */}
         <li className="nav-item">
           <button
-            className="btn btn-link text-start w-100"
+            className="btn-link"
             onClick={() => toggleCollapse('dataLab')}
           >
             Data Lab

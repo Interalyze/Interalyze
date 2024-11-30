@@ -79,22 +79,14 @@
   transform: translateX(100%);
 }
 
-/* Center content */
-.custom-form-container {
-  width: 80%;
-  max-width: 400px;
-  padding: 2rem;
-  box-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.1);
-  border-radius: 0.5rem;
-  background-color: #fff;
-}
+
 
 
 
 /* Right section (form area) */
 .form-section {
   flex: 1; /* Take up the other half of the screen */
-  gap: 3rem;
+  gap: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center; /* Center vertically */
@@ -107,10 +99,11 @@
 .custom-form-container {
   display: flex;
   flex-direction: column;
-  width: 25rem;
-  padding: 2.5rem;
+  width: 20rem;
+  padding: 2rem;
   box-shadow: 0 0.05rem 0.5rem rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
+  font-size: 0.75rem;
   background-color: #fff;
 }
 
@@ -121,56 +114,61 @@
 .custom-form-container .outputButton{
   display: block;
   width: 100%;
-  height: 3rem;
-  margin-bottom: 1.5rem;
+  height: 2rem;
+  margin-bottom: 0.75em;
   font-weight: 600;
+  font-size: 0.75rem;
 }
 .custom-form-container .textInput{
   display: block;
   width: 100%;
-  height: 3rem;
-  margin-bottom: 1.5rem;
+  height: 2rem;
+  margin-bottom: 0.75rem;
   font-weight: 600;
+  font-size: 0.75rem;
 }
 
 /* Center-align specific elements */
 .custom-form-container .center-text {
   text-align: center; /* Center alignment for "Sign in" and "Sign up" texts */
+  font-size: 1.25rem;
+  padding-bottom: 0%;
+  margin-bottom: 0%;
 }
-.blue-link {
+.custom-form-container .p{
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.60rem;
+}
+
+.coustom-form-container .blue-link {
   color: #007bff; /* Bootstrap primary blue */
   text-decoration: underline;
   cursor: pointer;
+  font-size: 0.60rem;
 }
 
 
 h2 {
   text-align: center;
-  font-size: 1.5rem;
   font-weight: bold;
 }
 
-p {
-  text-align: center;
-  margin-top: 1rem;
-  font-size: 0.9rem;
-}
 /* Sidebar styles */
 .sidebar {
-  background-color: #f8f9fa; /* Light background */
+  background-color: whitesmoke;
   height: 100vh; /* Full viewport height */
-  width: 250px; /* Fixed sidebar width */
+  width: 20rem; /* Fixed sidebar width */
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for separation */
+  padding: 1.25rem;
 }
 
 .sidebar h4 {
   font-size: 1.25rem;
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
   font-weight: bold;
-  color: #343a40; /* Darker text for the title */
+  color: black; /* Darker text for the title */
 }
 
 .sidebar .nav {
@@ -180,48 +178,68 @@ p {
 }
 
 .sidebar .nav-item {
-  margin-bottom: 10px;
+  margin-bottom: 0.6rem;
 }
 
 .sidebar .btn-link {
   text-decoration: none;
-  color: #495057; /* Neutral link color */
+  color: black; /* Neutral link color */
   font-size: 1rem;
   font-weight: 500;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between; /* For collapsible arrows if needed */
-  padding: 10px 15px;
+  padding: 0.6rem 1rem;
   border: none;
   background: none;
-  border-radius: 5px;
+  border-radius: 0.3rem;
   transition: background-color 0.2s;
 }
 
 .sidebar .btn-link:hover {
-  background-color: #e9ecef; /* Slight hover effect */
-  color: #212529; /* Darker hover color */
+  background-color: white; /* Slight hover effect */
+  color: black; /* Darker hover color */
 }
 
 .sidebar .collapse {
-  padding-left: 20px; /* Indent for sub-menus */
+  padding-left: 1.25rem; /* Indent for sub-menus */
 }
 
 .sidebar .nav-link {
-  color: #6c757d; /* Lighter color for sub-menu items */
+  background-color: whitesmoke;
+  color: gray; /* Lighter color for sub-menu items */
   font-size: 0.9rem;
 }
 
 .sidebar .nav-link:hover {
-  color: #343a40; /* Darker hover color for sub-menu items */
+  background-color: white;
+  color: darkgray; /* Darker hover color for sub-menu items */
 }
 
 .sidebar .active {
-  background-color: #e9ecef; /* Highlight active menu item */
-  color: #212529 !important;
+  background-color: white; /* Highlight active menu item */
+  color: black !important;
 }
 
 /* Add spacing to ensure no content is cut off */
 .sidebar .nav-item:last-child {
   margin-bottom: auto;
+}
+
+.contentContainer{
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.contentCard{
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  box-shadow: 0 0.1rem 1rem rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  padding: 2rem;
 }

@@ -10,6 +10,8 @@ import AuthPage from './pages/authPage';
 //import Network from './pages/network';
 //import DataLab from './pages/dataLab';
 import Layout from './components/layout'; // Sidebar layout wrapper
+import ChangeUserDetailsPage from './pages/changeUserDetailsPage';
+import FileUpload from './pages/fileUpload';
 
 const App = () => {
   return (
@@ -21,7 +23,11 @@ const App = () => {
         {/* Protected routes: Main dashboard with sidebar */}
         <Route path="/MainPage" element={<Layout />}>
           <Route index element={<MainPage />} /> {/* Default page under MainPage */}
-
+          <Route path="/MainPage/ChangeUserDetails" element={<ChangeUserDetailsPage />}/>
+        </Route>
+        <Route path="/Candidate" element={<Layout />}>
+          <Route index element={<MainPage />} /> {/* Default page under MainPage */}
+          <Route path="/Candidate/CreateCandidate" element={<FileUpload/>}/>
         </Route>
 
         {/* Fallback for undefined routes */}
