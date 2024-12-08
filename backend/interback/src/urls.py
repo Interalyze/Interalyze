@@ -25,6 +25,6 @@ urlpatterns = [
     path("api/analyze-personality/", analyze_personality, name="analyze_personality"),
     path("api/soft-skills-analysis/", analyze_soft_skills, name="analyze_soft-skills"),
     path("api/skills-analysis/", analyze_skills, name="analyze_skills"),
-    path("api/analyze-stress", analyze_stress, name="analyze_stress"),
+    path("api/analyze-stress/", analyze_stress, name="analyze_stress"),
 ]
 
