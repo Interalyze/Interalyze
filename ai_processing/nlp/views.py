@@ -7,6 +7,9 @@ from ai_processing.nlp.personality_analysis.personality_analysis_model import Pe
 from .personality_analysis.bert_personality_model import BERTPersonalityAnalyzer
 import json
 
+import logging
+logger = logging.getLogger(__name__)
+
 @csrf_exempt
 def analyze_bert_personality(request):
     """
@@ -42,6 +45,7 @@ def analyze_personality(request):
     if request.method == "POST":
         try:
             # Parse the input text or batch of texts from the request body
+            logger.info(f"Request body: {request.body}")
             body = json.loads(request.body)
             input_texts = body.get("texts", [])
 
@@ -111,6 +115,7 @@ def analyze_soft_skills(request):
     if request.method == "POST":
         try:
             # Parse the input text from the request body
+            logger.info(f"Request body: {request.body}")
             body = json.loads(request.body)
             input_text = body.get("text", "")
 
@@ -139,6 +144,7 @@ def analyze_stress(request):
     if request.method == "POST":
         try:
             # Parse the input text or batch of texts from the request body
+            logger.info(f"Request body: {request.body}")
             body = json.loads(request.body)
             input_texts = body.get("texts", [])
 
