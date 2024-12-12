@@ -33,25 +33,28 @@ def analyze_bert_personality(request):
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
-
-# CSRF exemption allows testing without CSRF token (for development only)
+#  one answer at a time
 @csrf_exempt
 def analyze_personality(request):
     """
-    API endpoint to analyze personality traits based on the provided text.
+    API endpoint to analyze personality traits for a single question or a batch of questions.
     """
     if request.method == "POST":
         try:
-            # Parse the input text from the request body
+            # Parse the input text or batch of texts from the request body
             body = json.loads(request.body)
-            input_text = body.get("text", "")
+            input_texts = body.get("texts", [])
 
-            if not input_text:
+            if not input_texts:
                 return JsonResponse({"error": "No text provided"}, status=400)
 
-            # Initialize the personality analyzer and get results
             analyzer = PersonalityAnalyzer()
-            results = analyzer.analyze_text(input_text)
+            results = []
+
+            # Analyze each text individually
+            for text in input_texts:
+                result = analyzer.analyze_text(text)
+                results.append(result)
 
             # Return the personality predictions
             return JsonResponse({"personality_scores": results}, status=200)
@@ -60,6 +63,7 @@ def analyze_personality(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
 
 # GIVES ALL SKILLS
 @csrf_exempt
@@ -97,11 +101,12 @@ def analyze_skills(request):
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
+
 #  GIVES ONLY SOFT SKILLS
 @csrf_exempt
 def analyze_soft_skills(request):
     """
-    API endpoint to analyze only soft skills from the provided text.
+    API endpoint to analyze only soft skills from all answers at once.
     """
     if request.method == "POST":
         try:
@@ -125,23 +130,28 @@ def analyze_soft_skills(request):
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
+#  one answer at a time
 @csrf_exempt
 def analyze_stress(request):
     """
-    API endpoint to analyze stress levels based on the provided text.
+    API endpoint to analyze stress levels for a single question or a batch of questions.
     """
     if request.method == "POST":
         try:
-            # Parse the input text from the request body
+            # Parse the input text or batch of texts from the request body
             body = json.loads(request.body)
-            input_text = body.get("text", "")
+            input_texts = body.get("texts", [])
 
-            if not input_text:
+            if not input_texts:
                 return JsonResponse({"error": "No text provided"}, status=400)
 
-            # Initialize the classifier and get results
             classifier = StressAnalyzer()
-            results = classifier.classify_stress(input_text)
+            results = []
+
+            # Analyze each text individually
+            for text in input_texts:
+                result = classifier.classify_stress(text)
+                results.append(result)
 
             # Return the stress analysis predictions
             return JsonResponse({"stress_analysis": results}, status=200)
@@ -150,3 +160,4 @@ def analyze_stress(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
