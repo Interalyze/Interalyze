@@ -1,6 +1,7 @@
 from django.urls import path
-from . import views
+from .views import StreamGoogleDriveVideoByName, UploadGoogleDriveVideo
 
 urlpatterns = [
-    path('video_play/',views.stream_google_drive_video, name='stream_google_drive_video' )
+    path('video_play/<str:video_name>/', StreamGoogleDriveVideoByName.as_view(), name='stream_google_drive_video_by_name'),
+    path('upload_video/', UploadGoogleDriveVideo.as_view(), name='upload_google_drive_video'),
 ]

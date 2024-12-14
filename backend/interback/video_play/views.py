@@ -1,40 +1,93 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseDownload
-from google.oauth2.service_account import Credentials
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 from django.http import StreamingHttpResponse
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseDownload, MediaIoBaseUpload
+from google.oauth2.service_account import Credentials
 import io
-# Build the path to the credentials.json file
-CREDENTIALS_PATH = "../../credentials.json"
 
-# Define Google Drive credentials and scope
-SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
+CREDENTIALS_PATH = "path/to/credentials.json"
+READ_SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
+UPLOAD_SCOPES = ['https://www.googleapis.com/auth/drive.file']
 
-@login_required
-def stream_google_drive_video(request, file_id ): 
-    # Authenticate with Google Drive API
-    drive_service = build('drive', 'v3', credentials=credentials)
-    credentials = Credentials.from_service_account_file(CREDENTIALS_PATH, scopes=SCOPES)
-    
-    # Get file metadata
-    request_metadata = drive_service.files().get(fileId=file_id, fields='name,mimeType').execute() #hardcoded for testing
-    file_name = request_metadata.get('name')
-    mime_type = request_metadata.get('mimeType')
+class StreamGoogleDriveVideoByName(APIView):
+    permission_classes = [IsAuthenticated]
 
-    # Download the file
-    request_file = drive_service.files().get_media(fileId=file_id)
-    buffer = io.BytesIO()
-    downloader = MediaIoBaseDownload(buffer, request_file)
+    def get(self, request, video_name):
+        try:
+            credentials = Credentials.from_service_account_file(CREDENTIALS_PATH, scopes=READ_SCOPES)
+            drive_service = build('drive', 'v3', credentials=credentials)
 
-    done = False
-    while not done:
-        status, done = downloader.next_chunk()
+            # Search for the file by name
+            results = drive_service.files().list(
+                q=f"name='{video_name}' and mimeType contains 'video/'",
+                fields='files(id, name, mimeType)',
+                pageSize=1
+            ).execute()
 
-    buffer.seek(0)
+            files = results.get('files', [])
+            if not files:
+                return Response({"error": "Video not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    # Stream the video as a response
-    response = StreamingHttpResponse(buffer, content_type=mime_type)
-    response['Content-Disposition'] = f'inline; filename="{file_name}"'
-    return response
+            file_info = files[0]
+            file_id = file_info.get('id')
+            mime_type = file_info.get('mimeType', 'application/octet-stream')
+            file_name = file_info.get('name', video_name)
 
+            # Download the file into a memory buffer
+            request_file = drive_service.files().get_media(fileId=file_id)
+            buffer = io.BytesIO()
+            downloader = MediaIoBaseDownload(buffer, request_file)
+
+            done = False
+            while not done:
+                status_, done = downloader.next_chunk()
+
+            buffer.seek(0)
+
+            # Stream the video as a response
+            response = StreamingHttpResponse(buffer, content_type=mime_type)
+            response['Content-Disposition'] = f'inline; filename="{file_name}"'
+            return response
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UploadGoogleDriveVideo(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if 'video' not in request.FILES:
+            return Response({"error": "No video file provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+        video_file = request.FILES['video']
+        video_name = request.data.get('video_name', 'untitled_video')
+
+        credentials = Credentials.from_service_account_file(CREDENTIALS_PATH, scopes=UPLOAD_SCOPES)
+        drive_service = build('drive', 'v3', credentials=credentials)
+
+        file_metadata = {
+            'name': video_name,
+            'mimeType': video_file.content_type or 'application/octet-stream'
+        }
+
+        media_body = MediaIoBaseUpload(video_file, mimetype=video_file.content_type, resumable=True)
+
+        try:
+            uploaded_file = drive_service.files().create(
+                body=file_metadata,
+                media_body=media_body,
+                fields='id, name'
+            ).execute()
+
+            return Response({
+                "message": "Video uploaded successfully.",
+                "file_id": uploaded_file.get('id'),
+                "file_name": uploaded_file.get('name')
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
