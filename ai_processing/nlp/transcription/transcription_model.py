@@ -158,7 +158,6 @@ class Transcription_Model:
             #print(f"{speaker} = {role}")
         
         return speaker_roles
-
     def get_question_answer_pairs(self, text, roles):
         """
         Extract question-answer pairs from speaker-labeled transcriptions with timestamps.
@@ -167,32 +166,64 @@ class Transcription_Model:
             text (str): Speaker-labeled transcription string with timestamps.
 
         Returns:
-            list: List of question-answer pairs.
+            list: List of question-answer pairs, each containing a question, answer, and respective timestamps.
         """
-        pattern = re.compile(r"\(SPEAKER_(\d{2})\s[\d\.\s\-]+\)\s(.*)")
+        # Regex pattern to capture timestamps, speaker labels, and content
+        pattern = re.compile(r"\(SPEAKER_(\d{2})\s([\d\.\s\-]+)\)\s(.*)")
 
         question = None
         answer = []
+        question_timestamp = None
+        answer_timestamps = []
         qa_pairs = []
 
         for line in text.split("\n"):
             match = pattern.match(line)
             if match:
                 speaker = match.group(1)
-                content = match.group(2)
+                timestamp = match.group(2)  # Timestamp
+                content = match.group(3)
 
-                # Extract all questions (from both speakers) --> tell me about yourself on wrong speaker
                 if self.is_question(content):
                     if question and answer:
-                        qa_pairs.append((question, " ".join(answer)))
+                        answer_start, answer_end = self.extract_start_end_timestamps(answer_timestamps)
+                        qa_pairs.append((question, " ".join(answer), question_timestamp, answer_start, answer_end))
                         answer = []
+                        answer_timestamps = []
+
                     question = content
-                    continue  # Skip adding the question to the answer
+                    question_timestamp = timestamp
+                    continue 
 
                 if question and roles.get(f"SPEAKER_{speaker}") == "Interviewee":
                     answer.append(content)
+                    answer_timestamps.append(timestamp)
 
         if question and answer:
-            qa_pairs.append((question, " ".join(answer)))
+            answer_start, answer_end = self.extract_start_end_timestamps(answer_timestamps)
+            qa_pairs.append((question, " ".join(answer), question_timestamp, answer_start, answer_end))
 
         return qa_pairs
+    
+    def extract_start_end_timestamps(self, answer_timestamps):
+        """
+        Extract the first and last timestamp from a list of timestamp ranges.
+
+        Args:
+            answer_timestamps (list): List of timestamp ranges as strings.
+
+        Returns:
+            tuple: First and last timestamp as floats, or None if the list is empty.
+        """
+        if not answer_timestamps:
+            return None, None
+
+        # Extract the first start timestamp
+        first_range = answer_timestamps[0]
+        start_timestamp = float(first_range.split('-')[0].strip())
+
+        # Extract the last end timestamp
+        last_range = answer_timestamps[-1]
+        end_timestamp = float(last_range.split('-')[-1].strip())
+        print(start_timestamp, end_timestamp)
+        return start_timestamp, end_timestamp

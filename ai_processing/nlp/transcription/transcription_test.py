@@ -14,8 +14,12 @@ transcriptions, qa_pairs = transcribe.transcribe_and_diarize(
         #print(transcription)
     #print("\n" + "="*40 + "\n")
 
-print(len(qa_pairs))
- #Print the results
-for i, (question, answer) in enumerate(qa_pairs, 1):
+#print(len(qa_pairs))
+#print(qa_pairs)
+# Print the results with all answer timestamps
+for i, (question, answer, question_timestamp, answer_start, answer_end) in enumerate(qa_pairs, 1):
     print(f"Q{i}: {question}")
-    print(f"A{i}: {answer}\n")
+    print(f"A{i}: {answer}")
+    print(f"Question Timestamp: {question_timestamp}")
+    print(f"Answer Start: {answer_start}")
+    print(f"Answer End: {answer_end}")
