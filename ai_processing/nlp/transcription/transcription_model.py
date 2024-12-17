@@ -24,7 +24,7 @@ class Transcription_Model:
         # Load WhisperX transcription model
         self.model = whisperx.load_model(model_size, device, compute_type=compute_type, language = "en")
     def preprocess_audio(self, audio_path, output_path, duration_ms=5000):         #this does not work
-        """
+        """                     CONVERT AVI MP4 --> WAV
         Adds silence or clear speech samples to the start of the audio file.
         in order to prevent cold start problem/ warm up
         Args:
@@ -38,15 +38,14 @@ class Transcription_Model:
         audio = audio.set_channels(1)  # Convert to mono
         audio = audio.set_frame_rate(16000)  # Resample to 16 kHz
         # Generate silence
-        silence = AudioSegment.silent(duration=duration_ms)
+        #silence = AudioSegment.silent(duration=duration_ms)
 
         # Concatenate silence and audio
-        processed_audio = silence + audio       #add silence or first segment
-        audio = AudioSegment.from_file(audio_path)
+        #processed_audio = silence + audio       #add silence or first segment
 
 
         # Save the processed audio
-        processed_audio.export(output_path, format="wav")
+        audio.export(output_path, format="wav")
 
     def transcribe_and_diarize(self, audio_path, num_speakers=2, min_speakers=2, max_speakers=2, use_auth_token=None):
         """
@@ -63,7 +62,7 @@ class Transcription_Model:
             dict: Dictionary containing speaker-wise transcriptions.
         """
         processed_audio_path = "processed_audio.wav"
-        #self.preprocess_audio(audio_path, processed_audio_path)
+        self.preprocess_audio(audio_path, processed_audio_path)
         # Load audio
         audio = whisperx.load_audio(audio_path)
 
@@ -225,5 +224,5 @@ class Transcription_Model:
         # Extract the last end timestamp
         last_range = answer_timestamps[-1]
         end_timestamp = float(last_range.split('-')[-1].strip())
-        print(start_timestamp, end_timestamp)
+        #print(start_timestamp, end_timestamp)
         return start_timestamp, end_timestamp
