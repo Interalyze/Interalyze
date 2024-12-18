@@ -5,6 +5,10 @@ from ai_processing.nlp.stress_analysis.stress_analysis_model import StressAnalyz
 from .skills_analysis.skills_analysis_model import AllSkillsAnalyzer, SkillAnalyzer
 from ai_processing.nlp.personality_analysis.personality_analysis_model import PersonalityAnalyzer
 from .personality_analysis.bert_personality_model import BERTPersonalityAnalyzer
+from .transcription.transcription_model import Transcription_Model
+import torch
+import os
+from django.core.files.storage import default_storage
 import json
 
 @csrf_exempt
@@ -161,3 +165,46 @@ def analyze_stress(request):
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
+@csrf_exempt
+def transcribe_audio(request):
+    """
+    API endpoint to transcribe audio files to text.
+    """
+    if request.method == "POST":
+        try:
+            if "audio_file" not in request.FILES:
+                return JsonResponse({"status": "error", "message": "No audio file provided"}, status=400)
+
+            audio_file = request.FILES["audio_file"]
+            
+            file_path = default_storage.save(f"temp/{audio_file.name}", audio_file)
+            if torch.cuda.is_available():
+                print("CUDA is available")
+                device = "cuda"  # Use GPU if available
+                compute_type = "float16"
+            else:
+                print("CUDA is not available")
+                device = "cpu"  # Use CPU if CUDA is not available
+                compute_type = "int8"
+            
+            transcribe = Transcription_Model(model_size="medium", device=device, compute_type=compute_type, batch_size=16)
+            transcriptions, qa_pairs = transcribe.transcribe_and_diarize(
+                file_path, num_speakers=2, min_speakers=2, max_speakers=2, use_auth_token="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"
+            )
+            qa_results = []
+            for i, (question, answer, question_timestamp, answer_start, answer_end) in enumerate(qa_pairs, 1):
+                qa_results.append({
+                    "question": question,
+                    "answer": answer,
+                    "question_timestamp": question_timestamp,
+                    "answer_start": answer_start,
+                    "answer_end": answer_end
+                })
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            return JsonResponse({"status": "success", "qa_pairs": qa_results}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
