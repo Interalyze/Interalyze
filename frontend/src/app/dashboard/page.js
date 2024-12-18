@@ -11,21 +11,49 @@ import {
 } from "@/components/ui/card";
 
 const transcript = [
-  {
-    question: "So how are you doing?",
-    answer: "I'm pretty good.",
-    startTime: 0,
-    endTime: 5,
-  },
-  {
-    question: "Tell me about yourself.",
-    answer: "I am a course 6-7 student at MIT specializing in computational biology.",
-    startTime: 6,
-    endTime: 60,
-  },
-  // Add more transcript entries here...
-];
-
+    {
+      question: "So how are you doing?",
+      answer: "I'm pretty good.",
+      startTime: 0,
+      endTime: 5,
+    },
+    {
+      question: "Ok well so please tell me about yourself.",
+      answer:
+        "Ok uhm so have you looked at my resume or should I alright so I guess ah I am course 6-7 here at M.I.T ah which is computational biology...",
+      startTime: 6,
+      endTime: 60,
+    },
+    {
+      question: "So please tell me about a time that you demonstrated leadership.",
+      answer:
+        "Ok uhm one of the things we have to do for Camp Kesem is fundraise all the money to run the camp which is over $50,000. Ah so one of the things that I individually spearhead every year is called the Camp Kesem date auction...",
+      startTime: 61,
+      endTime: 102,
+    },
+    {
+      question:
+        "Tell me about a time when you were working on a team and faced with a challenge, how did you solve that problem?",
+      answer:
+        "Ahh I guess the easiest team project I had was last semester, uhm I worked on this six double o five project which is algorithm or software architecture. And we were put in a group of 3 people and it was standard you know we signed the contract everyone is supposed to work equally but it ended up being by the end of it that someone didn't like put their fair share of work in... Ah essentially we talked to him we didn't really get it out we actually had to go to some of the T.A's we got a little bit ah and that kinda like pushed him forward so I mean I guess what I am showing is like I'm not afraid to go to the right method or like authority like where in cases this situation presents itself.",
+      startTime: 103,
+      endTime: 150,
+    },
+    {
+      question: "Oh yes. Alright tell me about one of your weaknesses and how you plan to overcome it.",
+      answer:
+        "Uhmmm. I would say for this job ah I'm a little technically underprepared. Ah I've only taken the introductory software classes so far and as well as introductory bio classes but I think just from sheer interest and sheer effort I will be able to kinda overcome these obstacles.",
+      startTime: 151,
+      endTime: 180,
+    },
+    {
+      question: "Now why do you think we should hire you?",
+      answer:
+        "Ah I'm very interested in the subject of computation biology and I think that I will be able to contribute a lot to this field uhm I've had a good amount of experience and I think I will be a solid intern.",
+      startTime: 181,
+      endTime: 197,
+    },
+  ];
 export default function Dashboard() {
   const videoRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
