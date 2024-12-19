@@ -44,9 +44,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # Added CorsMiddleware
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # Added CorsMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -78,17 +78,29 @@ WSGI_APPLICATION = 'src.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',  # Use the PostgreSQL backend
+#        'NAME': 'Interalyze',              # Replace with your database name
+#        'USER': 'postgres',                   # Replace with your username
+#        'PASSWORD': 'artun',               # Replace with your password
+#        'HOST': 'localhost',                       
+#        'PORT': '5433',                            # Default PostgreSQL port
+#    }
+#}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # Use the PostgreSQL backend
-        'NAME': 'Interalyze',              # Replace with your database name
+        # 'ENGINE': 'django.db.backends.postgresql',  # Use the PostgreSQL backend
+        'ENGINE': 'django.db.backends.sqlite3',  
+        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'NAME': 'interdb',              # Replace with your database name
         'USER': 'postgres',                   # Replace with your username
-        'PASSWORD': 'artun',               # Replace with your password
+        'PASSWORD': 'alp68ece',               # Replace with your password
         'HOST': 'localhost',                       
         'PORT': '5433',                            # Default PostgreSQL port
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

@@ -163,3 +163,4 @@ cython_debug/
 
 node_modules/
 client_secret_*.json
+credentials.json

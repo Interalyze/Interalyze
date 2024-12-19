@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import ReactPlayer from 'react-player';
 
-const VideoPlayer = ({ fileId }) => {
+const VideoPlayer = () => {
   const [videoUrl, setVideoUrl] = useState('');
 
   useEffect(() => {
-    fetch(`/api/video/${fileId}`)
-      .then(response => response.blob())
-      .then(blob => {
+    const videoEndpoint = 'http://127.0.0.1:8000/video_play/P61.avi/';
+
+    fetch(videoEndpoint)
+      .then((response) => response.blob())
+      .then((blob) => {
         const url = URL.createObjectURL(blob);
         setVideoUrl(url);
-      });
-  }, [fileId]);
+      })
+      .catch((error) => console.error('Error fetching video:', error));
+  }, []);
 
   return (
     <div>
       {videoUrl ? (
-        <ReactPlayer url={"https://drive.google.com/file/d/164LMpsVOmUkFBowrAfgREzTcemgJGysA/view?usp=sharing"} controls={true} />
+        <video src={videoUrl} controls width="100%" height="auto">
+          Your browser does not support the video tag.
+        </video>
       ) : (
         <p>Loading video...</p>
       )}
