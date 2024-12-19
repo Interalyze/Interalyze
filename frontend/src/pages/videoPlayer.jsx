@@ -4,7 +4,7 @@ const VideoPlayer = () => {
   const [videoUrl, setVideoUrl] = useState('');
 
   useEffect(() => {
-    const videoEndpoint = 'http://127.0.0.1:8000/video_play/P61.avi/';
+    const videoEndpoint = 'http://127.0.0.1:8000/video_play/P61.mp4/';
 
     fetch(videoEndpoint)
       .then((response) => response.blob())
