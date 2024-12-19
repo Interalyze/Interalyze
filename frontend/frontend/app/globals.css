@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+/* Global Color Variables */
+:root {
+  /* Primary Colors */
+  --primary-Dark: #363740; /* Dark gray for backgrounds */
+  --primary-light: #F7F8FC; /* White for text */
+
+  /* Secondary Colors */
+  --grey-sidebar-text: #A4A6B3; /* Slightly lighter gray for highlights */
+  --chosen-sidebar-text: #DDE2FF; /* Light gray for less emphasized text */
+
+  /* Hover and Active States */
+  --chosen-sb-bg: #46474F; /* Darker gray for hover */
+
+  /* Accent Colors */
+  --accent: #3182ce; /* Blue accent color */
+  --accent-hover: #2b6cb0; /* Darker blue for hover */
+  --chart-red: 0, 100%, 50%; /* Bright red */
+  --chart-green: 120, 60%, 40%; /* Dark green */
+
+  /* Utility Colors */
+  --error: #e53e3e; /* Red for errors */
+  --success: #38a169; /* Green for success */
+  --warning: #dd6b20; /* Orange for warnings */
+}
+
+
+
+/* Sidebar Styles */
+.sidebar {
+  background-color: var(--primary-Dark); /* Dark gray background */
+  color: var(--grey-sidebar-text); /* White text color */
+  height: 100vh; /* Full screen height */
+  width: 11rem; /* Fixed width */
+  display: flex;
+  flex-direction: column;
+  padding-top: 1.5rem; /* Add padding */
+}
+
+.sidebar-logo {
+  text-align: center;
+  margin-bottom: 2rem; /* Space below the logo */
+  font-size: 1.25rem; /* Text size for logo */
+  font-weight: bold; /* Bold text */
+}
+
+.sidebar-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem; /* Space below the profile */
+}
+
+.sidebar-profile .avatar {
+  width: 4rem; /* Avatar size */
+  height: 4rem; /* Avatar size */
+}
+
+.sidebar-profile .name {
+  margin-top: 0.5rem;
+  font-size: 1rem; /* Profile name size */
+  font-weight: 500; /* Medium weight */
+}
+
+.sidebar-nav {
+  flex-grow: 1; /* Make the nav fill remaining space */
+}
+
+.sidebar-nav ul {
+  list-style: none; /* Remove list styles */
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li {
+  margin-bottom: 0rem; /* Space between items */
+}
+
+.sidebar-nav button {
+  width: 100%; /* Full width button */
+  height: 3.5rem;
+  border-radius: 0;
+  justify-content: start; /* Align text to the left */
+  color: var(--grey-sidebar-text); /* Light gray text */
+  background-color: transparent; /* Transparent background */
+  transition: background-color 0.2s ease, color 0.2s ease; /* Smooth hover effect */
+}
+
+.sidebar-nav button:hover {
+  color: var(--chosen-sidebar-text); /* White text on hover */
+  background-color: var(--chosen-sb-bg); /* Darker gray background on hover */
+}
+
+.sidebar-nav button.active {
+  color: var(--chosen-sidebar-text); /* Active text color */
+  background-color: var(--chosen-sb-bg); /* Active background color */
+}
+
+.card {
+  height: 21rem;
+  width: 38rem;
+  background-color: white; /* Use your defined variable or a fallback color */
+  color: var(--primary-text); /* Use your defined variable or a fallback color */
+  padding: 0.5rem; /* Padding inside the card */
+  display: flex; /* Flexible layout for content alignment */
+  flex-direction: column; /* Vertical stacking of children */
+  justify-content: space-between; /* Space out children vertically */
+  overflow: hidden; /* Clip content that overflows */
+}
