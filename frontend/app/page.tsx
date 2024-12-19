@@ -1,11 +1,40 @@
+/* Updated page.tsx */
 "use client";
+
 import { useEffect, useRef, useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import SidebarLayout from "@/components/sidebarlayout";
 import { StressBarChart } from "@/components/stressChart";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink,BreadcrumbList,BreadcrumbSeparator } from "@/components/ui/breadcrumb"; // Import Breadcrumb components
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"; // Import Breadcrumb components
 import { PersonalityBarChart } from "@/components/personalityChart";
+
+
+interface StressData {
+  question: string;
+  stress: number;
+  confidence: number;
+}
+
+interface PersonalityData {
+  question: string;
+  openness: number;
+  agreeableness: number;
+  conscientiousness: number;
+  extraversion: number;
+  neuroticism: number;
+}
 
 const transcript = [
   {
@@ -53,11 +82,13 @@ const transcript = [
 ];
 
 export default function CandidateDashboard() {
-  const videoRef = useRef(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [personalityChartData, setPersonalityChartData] = useState([]);
-  const [skills, setSkills] = useState([]);
-  const [newQuestion, setNewQuestion] = useState(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [personalityChartData, setPersonalityChartData] = useState<
+    PersonalityData[]
+  >([]);
+  const [skills, setSkills] = useState<string[]>([]);
+  const [newQuestion, setNewQuestion] = useState<StressData | undefined>(undefined);
 
   useEffect(() => {
     const fetchAnalysis = async () => {
@@ -77,8 +108,7 @@ export default function CandidateDashboard() {
         );
         const stressResult = await stressResponse.json();
 
-        // Extract stress data
-        const stressData = {
+        const stressData: StressData = {
           question: `Q${currentIndex + 1}`,
           stress: stressResult.stress_analysis?.[0]?.confidence > 0.5 ? 1 : 0,
           confidence: Math.round(
@@ -86,7 +116,6 @@ export default function CandidateDashboard() {
           ),
         };
 
-        // Pass stress data to the chart
         setNewQuestion(stressData);
 
         // Personality Analysis API
@@ -100,7 +129,6 @@ export default function CandidateDashboard() {
         );
         const personalityResult = await personalityResponse.json();
 
-        // Update personality chart data
         setPersonalityChartData((prevData) => [
           ...prevData,
           {
@@ -109,8 +137,7 @@ export default function CandidateDashboard() {
             agreeableness:
               personalityResult.personality_scores?.[0]?.agreeableness || 0,
             conscientiousness:
-              personalityResult.personality_scores?.[0]?.conscientiousness ||
-              0,
+              personalityResult.personality_scores?.[0]?.conscientiousness || 0,
             extraversion:
               personalityResult.personality_scores?.[0]?.extraversion || 0,
             neuroticism:
@@ -118,7 +145,6 @@ export default function CandidateDashboard() {
           },
         ]);
 
-        // Update skills
         setSkills([
           "Teamwork",
           "Discipline",
@@ -171,8 +197,8 @@ export default function CandidateDashboard() {
               <BreadcrumbLink href="/candidates">Candidates</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem isCurrent>
-              <BreadcrumbLink href="#">Transcript Analysis</BreadcrumbLink>
+            <BreadcrumbItem>
+              <span aria-current="page">Transcript Analysis</span>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -181,16 +207,17 @@ export default function CandidateDashboard() {
           {/* Left Column */}
           <div className="space-y-6">
             {/* Video Hosting */}
-            <Card className="h-[21rem]  w-full">
+            <Card className="h-[21rem] w-full">
               <CardContent className="bg-black h-full flex items-center justify-center">
-                <video
-                  ref={videoRef}
-                  onTimeUpdate={handleTimeUpdate}
-                  controls
-                  className="w-full h-full"
-                >
-                  <source src="/path-to-video.mp4" type="video/mp4" />
-                </video>
+              <video
+  ref={videoRef}
+  onTimeUpdate={handleTimeUpdate}
+  controls
+  className="w-full h-full"
+>
+  <source src="/videos/P1.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
               </CardContent>
             </Card>
 
@@ -199,13 +226,14 @@ export default function CandidateDashboard() {
 
             {/* Personality Traits */}
             <PersonalityBarChart
-              newTraits={personalityChartData[currentIndex]}/>
+              newTraits={personalityChartData[currentIndex]}
+            />
           </div>
 
           {/* Right Column */}
           <div className="space-y-6">
             {/* Person Details */}
-            <Card className="h-[10.5rem]  w-full">
+            <Card className="h-[10.5rem] w-full">
               <CardHeader>
                 <CardTitle>Person Details</CardTitle>
               </CardHeader>
@@ -226,6 +254,7 @@ export default function CandidateDashboard() {
                     className={`mb-4 ${
                       index <= currentIndex ? "font-bold" : "font-normal"
                     }`}
+                    id={`transcript-item-${index}`}
                   >
                     <p>
                       <span className="text-gray-600">Q: </span>
@@ -259,3 +288,4 @@ export default function CandidateDashboard() {
     </SidebarLayout>
   );
 }
+

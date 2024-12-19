@@ -1,6 +1,11 @@
+import React from "react";
 import Sidebar from "@/components/Sidebar";
 
-export default function SidebarLayout({ children }) {
+interface SidebarLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function SidebarLayout({ children }: SidebarLayoutProps) {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
