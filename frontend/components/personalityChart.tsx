@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -43,37 +42,31 @@ const chartConfig = {
 
 interface PersonalityBarChartProps {
   newTraits?: {
-    openness: number;
-    agreeableness: number;
-    conscientiousness: number;
-    extraversion: number;
-    neuroticism: number;
+    openness?: number;
+    agreeableness?: number;
+    conscientiousness?: number;
+    extraversion?: number;
+    neuroticism?: number;
   };
 }
 
-export function PersonalityBarChart({ newTraits }: PersonalityBarChartProps) {
-  const placeholderData = {
-    openness: 0.85,
-    agreeableness: 0.70,
-    conscientiousness: 0.60,
-    extraversion: 0.50,
-    neuroticism: 0.30,
-  };
-
+export function PersonalityBarChart({ newTraits = {} }: PersonalityBarChartProps) {
   const [personalityData, setPersonalityData] = useState<
     { trait: string; confidence: number; fill: string }[]
   >([]);
 
   useEffect(() => {
-    const traits = newTraits || placeholderData;
+    const validTraits = newTraits
+      ? Object.entries(newTraits)
+          .filter(([trait]) => chartConfig.hasOwnProperty(trait))
+          .map(([trait, confidence]) => ({
+            trait,
+            confidence: confidence ?? 0,
+            fill: chartConfig[trait as keyof typeof chartConfig]?.color || "hsl(var(--chart-default))",
+          }))
+      : [];
 
-    const updatedData = Object.entries(traits).map(([trait, confidence]) => ({
-      trait,
-      confidence,
-      fill: chartConfig[trait as keyof typeof chartConfig]?.color || "hsl(var(--chart-default))",
-    }));
-
-    setPersonalityData(updatedData);
+    setPersonalityData(validTraits);
   }, [newTraits]);
 
   return (
@@ -99,7 +92,7 @@ export function PersonalityBarChart({ newTraits }: PersonalityBarChartProps) {
                 tickMargin={10}
                 axisLine={false}
                 tickFormatter={(value) =>
-                  chartConfig[value as keyof typeof chartConfig]?.label
+                  chartConfig[value as keyof typeof chartConfig]?.label || value
                 }
               />
               <XAxis type="number" domain={[0, 1]} hide />

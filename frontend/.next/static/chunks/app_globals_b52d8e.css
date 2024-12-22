@@ -398,10 +398,6 @@ body {
   margin-top: 1.5rem;
 }
 
-.block {
-  display: block;
-}
-
 .flex {
   display: flex;
 }
@@ -456,6 +452,10 @@ body {
 
 .h-\[21rem\] {
   height: 21rem;
+}
+
+.h-\[2rem\] {
+  height: 2rem;
 }
 
 .h-\[4rem\] {
@@ -712,6 +712,10 @@ body {
   background-color: #0000;
 }
 
+.p-0 {
+  padding: 0;
+}
+
 .p-6 {
   padding: 1.5rem;
 }
@@ -755,6 +759,10 @@ body {
   padding-bottom: .75rem;
 }
 
+.pl-2 {
+  padding-left: .5rem;
+}
+
 .pt-0 {
   padding-top: 0;
 }
@@ -763,8 +771,17 @@ body {
   padding-top: .75rem;
 }
 
+.pl-4 {
+  padding-left: 1rem;
+}
+
 .font-mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 
 .text-sm {
