@@ -554,6 +554,10 @@ body {
   height: 100vh;
 }
 
+.h-\[250px\] {
+  height: 250px;
+}
+
 .max-h-\[125px\] {
   max-height: 125px;
 }

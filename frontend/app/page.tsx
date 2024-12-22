@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import SidebarLayout from "@/components/sidebarlayout";
 import { StressBarChart } from "@/components/stressChart";
+import { StressPieChart } from "@/components/stressPieChart";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -251,7 +252,7 @@ export default function CandidateDashboard() {
               newTraits={personalityChartData[currentIndex]}
             />
 
-            <StressBarChart newQuestion={newQuestion} currentIndex={currentIndex} />
+            <StressPieChart newQuestion={newQuestion} currentIndex={currentIndex} />
           </div>
 
           <div className="space-y-6">
