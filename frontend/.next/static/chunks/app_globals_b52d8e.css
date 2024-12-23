@@ -454,6 +454,10 @@ body {
   height: 21rem;
 }
 
+.h-\[250px\] {
+  height: 250px;
+}
+
 .h-\[2rem\] {
   height: 2rem;
 }
@@ -478,12 +482,36 @@ body {
   height: 100vh;
 }
 
-.h-\[250px\] {
-  height: 250px;
+.h-\[33rem\] {
+  height: 33rem;
+}
+
+.h-\[31rem\] {
+  height: 31rem;
+}
+
+.h-\[29rem\] {
+  height: 29rem;
+}
+
+.h-\[29\.75rem\] {
+  height: 29.75rem;
+}
+
+.h-\[28\.75rem\] {
+  height: 28.75rem;
+}
+
+.h-\[31\.5rem\] {
+  height: 31.5rem;
 }
 
 .max-h-\[125px\] {
   max-height: 125px;
+}
+
+.max-h-\[225px\] {
+  max-height: 225px;
 }
 
 .w-0 {
@@ -524,6 +552,10 @@ body {
 
 .min-w-\[8rem\] {
   min-width: 8rem;
+}
+
+.min-w-\[600px\] {
+  min-width: 600px;
 }
 
 .max-w-\[400px\] {
@@ -616,6 +648,12 @@ body {
 
 .overflow-y-auto {
   overflow-y: auto;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .whitespace-nowrap {
@@ -763,8 +801,8 @@ body {
   padding-bottom: .75rem;
 }
 
-.pl-2 {
-  padding-left: .5rem;
+.pl-4 {
+  padding-left: 1rem;
 }
 
 .pt-0 {
@@ -773,10 +811,6 @@ body {
 
 .pt-3 {
   padding-top: .75rem;
-}
-
-.pl-4 {
-  padding-left: 1rem;
 }
 
 .font-mono {

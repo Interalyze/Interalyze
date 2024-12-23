@@ -1,40 +1,35 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { ChartContainer } from "@/components/ui/chart";
 
 // Define the type for a question
 type QuestionData = {
   question: string;
-  stress: string; // 0 or 1
+  stress: string; // "Not Stressed" or "Stressed"
   confidence: number; // Positive number
-};
-
-const chartConfig: ChartConfig = {
-  confidence: {
-    label: "Confidence",
-  },
 };
 
 interface StressBarChartProps {
   newQuestion?: QuestionData; // Optional prop for new question
   currentIndex: number; // Index of the current question
 }
+
+const chartConfig = {
+  confidence: {
+    label: "Confidence",
+    color: "hsl(var(--chart-blue))",
+  },
+};
 
 export function StressBarChart({ newQuestion, currentIndex }: StressBarChartProps) {
   const [stressData, setStressData] = useState<QuestionData[]>([]);
@@ -43,13 +38,13 @@ export function StressBarChart({ newQuestion, currentIndex }: StressBarChartProp
     if (newQuestion) {
       setStressData((prevData) => {
         const updatedData = [...prevData];
-        console.log("New Confidence:", updatedData[currentIndex]);
         updatedData[currentIndex] = {
           question: `Q${currentIndex + 1}`,
           stress: newQuestion.stress,
-        
           confidence:
-            newQuestion.stress == "Not Stressed" ? newQuestion.confidence: -newQuestion.confidence ,
+            newQuestion.stress === "Not Stressed"
+              ? Math.max(100 - newQuestion.confidence, 5)
+              : Math.max(100 + newQuestion.confidence, 5),
         };
         return updatedData;
       });
@@ -60,8 +55,8 @@ export function StressBarChart({ newQuestion, currentIndex }: StressBarChartProp
     return (
       stressData[index] || {
         question: `Q${index + 1}`,
-        stress: 0,
-        confidence: 0,
+        stress: "Uninitialized",
+        confidence: 2.5, // Default value for uninitialized data
       }
     );
   });
@@ -72,31 +67,43 @@ export function StressBarChart({ newQuestion, currentIndex }: StressBarChartProp
         <CardTitle>Stress Analysis</CardTitle>
         <CardDescription>Stress levels per question</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 flex justify-start items-start">
-        <div className="w-[90%] h-[150px] max-w-[400px] max-h-[125px]">
-          <ChartContainer config={chartConfig}>
+      <CardContent className="flex-1 flex justify-start items-center">
+        <div className="w-[90%] h-[250px] max-w-[400px]">
+          <ChartContainer config={chartConfig} className="max-h-[225px] min-w-[600px]">
             <BarChart
               width={400}
-              height={150}
+              height={250}
               data={processedData}
-              margin={{ top: 0, right: 10, left: -30, bottom: 0 }}
             >
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
-              <XAxis dataKey="question" />
-              <YAxis domain={[-100, 100]} />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel hideIndicator />}
+              <XAxis
+                type="category"
+                dataKey="question"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={10}
               />
-              <Bar dataKey="confidence">
-                <LabelList position="insideEnd" dataKey="question" fillOpacity={1} />
+              <YAxis
+                type="number"
+                domain={[0, 200]}
+                ticks={[0, 100, 200]}
+                tickFormatter={(value) => {
+                  if (value === 0) return "Calm";
+                  if (value === 100) return "Average";
+                  if (value === 200) return "Stressed";
+                  return "";
+                }}
+              />
+              <Bar dataKey="confidence" radius={5}>
                 {processedData.map((item, index) => (
                   <Cell
                     key={index}
                     fill={
-                      item.stress == "Not Stressed"
+                      item.stress === "Not Stressed"
                         ? "hsl(var(--chart-green))"
-                        : "hsl(var(--chart-red))"
+                        : item.stress === "Stressed"
+                        ? "hsl(var(--chart-red))"
+                        : "hsl(var(--chart-gray))" // Gray for uninitialized data
                     }
                   />
                 ))}

@@ -252,7 +252,7 @@ export default function CandidateDashboard() {
               newTraits={personalityChartData[currentIndex]}
             />
 
-            <StressPieChart newQuestion={newQuestion} currentIndex={currentIndex} />
+            <StressBarChart newQuestion={newQuestion} currentIndex={currentIndex} />
           </div>
 
           <div className="space-y-6">
@@ -264,34 +264,41 @@ export default function CandidateDashboard() {
                 <p>Details about the person go here.</p>
               </CardContent>
             </Card>
+            <Card className="h-[31.5rem] w-full">
+  <CardHeader>
+    <CardTitle>Transcript</CardTitle>
+  </CardHeader>
+  <CardContent
+    className="overflow-y-auto h-full"
+    id="transcript-card"
+    style={{
+      maxHeight: 'calc(100% - 4rem)', // Adjust height to accommodate the header
+    }}
+  >
+    {transcript.map((segment, index) => (
+      <div
+        key={index}
+        className={`mb-4 ${
+          index <= currentIndex ? "font-bold" : "font-normal"
+        }`}
+        id={`transcript-item-${index}`}
+        onClick={() => handleTranscriptClick(index)}
+        style={{ cursor: "pointer" }}
+      >
+        <p>
+          <span className="text-gray-600">Question: </span>
+          {segment.question}
+        </p>
+        <p>
+          <span className="text-gray-600">Answer: </span>
+          {segment.answer}
+        </p>
+      </div>
+    ))}
+  </CardContent>
+</Card>
 
-            <Card className="h-[54rem] w-full">
-              <CardHeader>
-                <CardTitle>Transcript</CardTitle>
-              </CardHeader>
-              <CardContent className="overflow-y-auto h-[50rem]" id="transcript-card">
-                {transcript.map((segment, index) => (
-                  <div
-                    key={index}
-                    className={`mb-4 ${
-                      index <= currentIndex ? "font-bold" : "font-normal"
-                    }`}
-                    id={`transcript-item-${index}`}
-                    onClick={() => handleTranscriptClick(index)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <p>
-                      <span className="text-gray-600">Q: </span>
-                      {segment.question}
-                    </p>
-                    <p>
-                      <span className="text-gray-600">A: </span>
-                      {segment.answer}
-                    </p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+
           </div>
         </div>
 
