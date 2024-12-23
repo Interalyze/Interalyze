@@ -1,328 +1,407 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import SidebarLayout from "@/components/sidebarlayout";
-import { StressBarChart } from "@/components/stressChart";
-import { StressPieChart } from "@/components/stressPieChart";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { PersonalityBarChart } from "@/components/personalityChart";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { FaFile } from "react-icons/fa";
 
-interface StressData {
-  question: string;
-  stress: string;
-  confidence: number;
+interface FormData {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  managerName: string;
+  jobPosition: string;
+  dateOfBirth: string;
+  interviewDate: string;
+  image: File | null;
+  resume: File | null;
+  consentForm: File | null;
+  video: File | null;
 }
 
-interface PersonalityData {
-  question: string;
-  openness: number;
-  agreeableness: number;
-  conscientiousness: number;
-  extraversion: number;
-  neuroticism: number;
-}
+const CreateCandidate: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    email: "",
+    phoneNumber: "",
+    managerName: "",
+    jobPosition: "",
+    dateOfBirth: "",
+    interviewDate: "",
+    image: null,
+    resume: null,
+    consentForm: null,
+    video: null,
+  });
+  const [draggedFile, setDraggedFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false); // Spinner state
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Notification message state
 
-interface SkillData {
-  skill_name: string;
-  confidence: number;
-}
-
-const transcript = [
-  {
-    question: "So how are you doing?",
-    answer: "I'm pretty good.",
-    startTime: 0,
-    endTime: 5,
-  },
-  {
-    question: "Ok well so please tell me about yourself.",
-    answer:
-      "Ok uhm so have you looked at my resume or should I alright so I guess ah I am course 6-7 here at M.I.T ah which is computational biology...",
-    startTime: 6,
-    endTime: 60,
-  },
-  {
-    question: "So please tell me about a time that you demonstrated leadership.",
-    answer:
-      "Ok uhm one of the things we have to do for Camp Kesem is fundraise all the money to run the camp which is over $50,000. Ah so one of the things that I individually spearhead every year is called the Camp Kesem date auction...",
-    startTime: 61,
-    endTime: 102,
-  },
-  {
-    question:
-      "Tell me about a time when you were working on a team and faced with a challenge, how did you solve that problem?",
-    answer:
-      "Ahh I guess the easiest team project I had was last semester, uhm I worked on this six double o five project which is algorithm or software architecture. And we were put in a group of 3 people and it was standard you know we signed the contract everyone is supposed to work equally but it ended up being by the end of it that someone didn't like put their fair share of work in... Ah essentially we talked to him we didn't really get it out we actually had to go to some of the T.A's we got a little bit ah and that kinda like pushed him forward so I mean I guess what I am showing is like I'm not afraid to go to the right method or like authority like where in cases this situation presents itself.",
-    startTime: 103,
-    endTime: 150,
-  },
-  {
-    question: "Oh yes. Alright tell me about one of your weaknesses and how you plan to overcome it.",
-    answer:
-      "Uhmmm. I would say for this job ah I'm a little technically underprepared. Ah I've only taken the introductory software classes so far and as well as introductory bio classes but I think just from sheer interest and sheer effort I will be able to kinda overcome these obstacles.",
-    startTime: 151,
-    endTime: 180,
-  },
-  {
-    question: "Now why do you think we should hire you?",
-    answer:
-      "Ah I'm very interested in the subject of computation biology and I think that I will be able to contribute a lot to this field uhm I've had a good amount of experience and I think I will be a solid intern.",
-    startTime: 181,
-    endTime: 197,
-  },
-];
-
-export default function CandidateDashboard() {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [personalityChartData, setPersonalityChartData] = useState<
-    PersonalityData[]
-  >([]);
-  const [skills, setSkills] = useState<SkillData[]>([]);
-  const [newQuestion, setNewQuestion] = useState<StressData | undefined>(undefined);
-
-  useEffect(() => {
-    const fetchSkills = async () => {
-      try {
-        const answersOnly = transcript.map((item) => item.answer).join(" ");
-        const skillsResponse = await fetch(
-          "http://127.0.0.1:8000/api/skills-analysis/",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: answersOnly }),
-          }
-        );
-
-        const skillsResult = await skillsResponse.json();
-
-        console.log("skills: "+ skillsResult.extracted_skills)
-        setSkills(skillsResult.extracted_skills || []);
-      } catch (error) {
-        console.error("Error fetching skills:", error);
-      }
-    };
-
-    fetchSkills();
-  }, []);
-
-  useEffect(() => {
-    const fetchAnalysis = async () => {
-      const currentAnswer = transcript[currentIndex]?.answer;
-
-      if (!currentAnswer) return;
-
-      try {
-        const stressResponse = await fetch(
-          "http://127.0.0.1:8000/api/analyze-stress/",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ texts: [currentAnswer] }),
-          }
-        );
-        const stressResult = await stressResponse.json();
-
-        const stressData: StressData = {
-          question: `Q${currentIndex + 1}`,
-          stress: stressResult.stress_analysis?.[0]?.stress_level,
-          confidence: (stressResult.stress_analysis?.[0]?.confidence * 100),
-        };
-
-        setNewQuestion(stressData);
-
-        const personalityResponse = await fetch(
-          "http://127.0.0.1:8000/api/analyze-personality/",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ texts: [currentAnswer] }),
-          }
-        );
-        const personalityResult = await personalityResponse.json();
-
-        setPersonalityChartData((prevData) => [
-          ...prevData,
-          {
-            question: `Q${currentIndex + 1}`,
-            openness: personalityResult.personality_scores?.[0]?.openness || 0,
-            agreeableness:
-              personalityResult.personality_scores?.[0]?.agreeableness || 0,
-            conscientiousness:
-              personalityResult.personality_scores?.[0]?.conscientiousness || 0,
-            extraversion:
-              personalityResult.personality_scores?.[0]?.extraversion || 0,
-            neuroticism:
-              personalityResult.personality_scores?.[0]?.neuroticism || 0,
-          },
-        ]);
-      } catch (error) {
-        console.error("Error fetching analysis:", error);
-      }
-    };
-
-    if (currentIndex < transcript.length) {
-      fetchAnalysis();
-    }
-
-    const currentElement = document.querySelector(
-      `#transcript-item-${currentIndex}`
-    );
-    const transcriptCard = document.getElementById("transcript-card");
-    if (currentElement && transcriptCard) {
-      const { offsetTop } = currentElement as HTMLElement;
-      transcriptCard.scrollTo({
-        top: offsetTop - transcriptCard.offsetTop,
-        behavior: "smooth",
-      });
-    }
-  }, [currentIndex]);
-
-  const handleTranscriptClick = (index: number) => {
-    const videoElement = document.querySelector("video");
-    if (videoElement) {
-      videoElement.currentTime = transcript[index].startTime;
-    }
-    setCurrentIndex(index);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
-  const handleTimeUpdate = () => {
-    if (!videoRef.current) return;
-    const currentTime = videoRef.current.currentTime;
+  const handleFileUpload = (
+    fileOrEvent: File | React.ChangeEvent<HTMLInputElement>,
+    field: keyof FormData
+  ): void => {
+    let file: File | null = null;
 
-    const segmentIndex = transcript.findIndex(
-      (segment) =>
-        currentTime >= segment.startTime && currentTime <= segment.endTime
-    );
-
-    if (segmentIndex !== -1 && segmentIndex !== currentIndex) {
-      setCurrentIndex(segmentIndex);
+    if (fileOrEvent instanceof File) {
+      file = fileOrEvent;
+    } else if (fileOrEvent.target.files && fileOrEvent.target.files[0]) {
+      file = fileOrEvent.target.files[0];
     }
+
+    if (file) {
+      setFormData((prevState) => ({
+        ...prevState,
+        [field]: file,
+      }));
+    } else {
+      console.error("Invalid file upload attempt.");
+    }
+  };
+
+  const handleDragAndDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+
+    if (file && file.type === "video/mp4") {
+      setDraggedFile(file);
+      handleFileUpload(file, "video");
+    } else {
+      alert("Please upload a valid MP4 file.");
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const data = new FormData();
+
+    Object.keys(formData).forEach((key) => {
+      const value = formData[key as keyof FormData];
+      if (value) {
+        data.append(key, value);
+      }
+    });
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/video_play/upload_video/",
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Error: ${response.status} - ${JSON.stringify(errorData)}`);
+      }
+
+      const result = await response.json();
+      setSuccessMessage(`Candidate created successfully: ${result.message}`);
+
+      // Clear all inputs
+      setFormData({
+        name: "",
+        email: "",
+        phoneNumber: "",
+        managerName: "",
+        jobPosition: "",
+        dateOfBirth: "",
+        interviewDate: "",
+        image: null,
+        resume: null,
+        consentForm: null,
+        video: null,
+      });
+      setDraggedFile(null);
+    } catch (error) {
+      console.error("Failed to create candidate:", error);
+      setSuccessMessage("Failed to create candidate. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+
+    // Hide success message after 5 seconds
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 5000);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
   };
 
   return (
     <SidebarLayout>
-      <main className="flex-1 bg-gray-100 p-6">
-        <Breadcrumb className="mb-4">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/candidates">Candidates</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <span aria-current="page">Transcript Analysis</span>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-x-12">
-          <div className="space-y-6">
-            <Card className="h-[21rem] w-full">
-              <CardContent className="bg-black h-full flex items-center justify-center">
-                <video
-                  ref={videoRef}
-                  onTimeUpdate={handleTimeUpdate}
-                  controls
-                  className="w-full h-full"
-                >
-                  <source src="/videos/P1.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              </CardContent>
-            </Card>
-
-            <PersonalityBarChart
-              newTraits={personalityChartData[currentIndex]}
-            />
-
-            <StressBarChart newQuestion={newQuestion} currentIndex={currentIndex} />
-          </div>
-
-          <div className="space-y-6">
-            <Card className="h-[10.5rem] w-full">
-              <CardHeader>
-                <CardTitle>Person Details</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>Details about the person go here.</p>
-              </CardContent>
-            </Card>
-            <Card className="h-[31.5rem] w-full">
-  <CardHeader>
-    <CardTitle>Transcript</CardTitle>
-  </CardHeader>
-  <CardContent
-    className="overflow-y-auto h-full"
-    id="transcript-card"
-    style={{
-      maxHeight: 'calc(100% - 4rem)', // Adjust height to accommodate the header
-    }}
-  >
-    {transcript.map((segment, index) => (
-      <div
-        key={index}
-        className={`mb-4 ${
-          index <= currentIndex ? "font-bold" : "font-normal"
-        }`}
-        id={`transcript-item-${index}`}
-        onClick={() => handleTranscriptClick(index)}
-        style={{ cursor: "pointer" }}
-      >
-        <p>
-          <span className="text-gray-600">Question: </span>
-          {segment.question}
-        </p>
-        <p>
-          <span className="text-gray-600">Answer: </span>
-          {segment.answer}
-        </p>
-      </div>
-    ))}
-  </CardContent>
-</Card>
-
-
-          </div>
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="loader"></div>
         </div>
+      )}
+      {successMessage && (
+        <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded shadow">
+          {successMessage}
+        </div>
+      )}
+      <div className="min-h-screen bg-gray-100">
+      <div className="flex-1 bg-gray-100 p-6 flex justify-center">
+        <div className="grid grid-cols-2 gap-x-20">
+          {/* Left Card for Form Fields */}
+          <Card className="w-full shadow-lg">
+            <CardHeader>
+              <CardTitle>Enter Candidate Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit}>
+                <div>
+                  <Label htmlFor="Name" className="block text-sm font-medium mt-4 mb-1">Name</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    placeholder="Name"
+                    type="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-8"> {/* Consistent gaps */}
+                  {/* Left Column */}
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="email" className="block text-sm font-medium mt-4 mb-1" >Email</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        placeholder="Email address"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+  
+                    <div className="space-y-4">
+                      <Label htmlFor="managerName" className="block text-sm font-medium mt-4 mb-1">Give Access to Managers</Label>
+                      <Input
+                        id="managerName"
+                        name="managerName"
+                        placeholder="Manager Name"
+                        value={formData.managerName}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+  
+                    <div className="space-y-4">
+                      <Label htmlFor="dateOfBirth" className="block text-sm font-medium mt-4 mb-1">Date of Birth</Label>
+                      <Input
+                        id="dateOfBirth"
+                        name="dateOfBirth"
+                        placeholder="DD/MM/YYYY"
+                        type="date"
+                        value={formData.dateOfBirth}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+  
+                    <div className="space-y-4">
+                      <Label htmlFor="image" className="block text-sm font-medium mt-4 mb-1">Image</Label>
+                      <div className="flex items-center">
+                        <Input
+                          id="image"
+                          type="file"
+                          onChange={(e) => handleFileUpload(e, "image")}
+                        />
+                      </div>
+                    </div>
+  
+                    <div className="space-y-4">
+                      <Label htmlFor="resume" className="block text-sm font-medium mt-4 mb-1">Resume</Label>
+                      <div className="flex items-center space-x-4">
+                        <Input
+                          id="resume"
+                          type="file"
+                          onChange={(e) => handleFileUpload(e, "resume")}
+                        />
+                      </div>
+                    </div>
+                  </div>
+  
+                  {/* Right Column */}
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="phoneNumber" className="block text-sm font-medium mt-4 mb-1">Phone Number</Label>
+                      <Input
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        placeholder="Phone Number"
+                        value={formData.phoneNumber}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+  
+                    <div className="space-y-4">
+                      <Label htmlFor="jobPosition" className="block text-sm font-medium mt-4 mb-1">Job Position</Label>
+                      <Input
+                        id="jobPosition"
+                        name="jobPosition"
+                        placeholder="Job Position"
+                        value={formData.jobPosition}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+  
+                    <div className="space-y-4">
+                      <Label htmlFor="interviewDate" className="block text-sm font-medium mt-4 mb-1">Interview Date</Label>
+                      <Input
+                        id="interviewDate"
+                        name="interviewDate"
+                        placeholder="DD/MM/YYYY"
+                        type="date"
+                        value={formData.interviewDate}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+  
+                    <div className="space-y-4">
+                    {/* Avatar and Name */}
+                    <div className="flex flex-col items-center">
+                      <p className="text-sm text-gray-700 font-medium">Ahmet Ince</p>
+                      <div className="sidebar-profile">
+                        <Avatar className="avatar">
+                          <AvatarImage src="" alt="Ahmet Ince" />
+                          <AvatarFallback>AI</AvatarFallback>
+                        </Avatar>
+                      </div>
+                    </div>
 
-        <div className="mt-6 h-[4rem] w-full col-span-2 flex items-center gap-4">
-          <span className="text-lg font-semibold">Skills:</span>
-          <Card className="flex-1 h-[4rem] flex items-center">
-          <CardContent className="flex items-center gap-4 flex-wrap w-full p-0 pl-4">
-  {skills
-    .filter((skill) => skill.skill_name.length >= 3) // Exclude skills with names shorter than 3 characters
-    .sort((a, b) => b.confidence - a.confidence) // Sort by confidence in descending order
-    .map((skill, index) => (
-      <Badge
-        className="h-[2rem]"
-        key={index}
-        variant="secondary"
-        style={{ opacity: Math.max(0.5, skill.confidence) }} // Ensure visibility with a minimum opacity
-      >
-        {skill.skill_name || "Unknown Skill"}
-      </Badge>
-    ))}
-</CardContent>
+                    {/* Resume File Input and Link */}
+                    <div className="flex items-center space-x-4">
+                      <a href="#" className="text-blue-500 underline">
+                        ResumeAhmet.docx
+                      </a>
+                    </div>
+                  </div>
+
+                  </div>
+
+                </div>
+  
+                {/* Submit Button */}
+                <div className="mt-6 pt-4"> {/* Added margin-top and padding-top */}
+                <Button type="submit" className="w-full">
+                  Enter Candidate Details
+                </Button>
+              </div>
+              </form>
+            </CardContent>
           </Card>
+  
+          {/* Right Cards */}
+          <div className="space-y-6">
+            {/* Drag Candidate's MP4 File Card */}
+            <Card className="mp4-upload-card">
+            <CardHeader className="mb-2"> {/* Adjusted margin-bottom */}
+                <CardTitle className="w-full ">
+                  Drag Candidate's MP4 File
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0"> {/* Adjusted padding-top */}
+              <div
+               style={{ height: "12rem" }}
+                className="flex items-center justify-center h-40 border border-dashed border-gray-400 rounded-md cursor-pointer"
+                onDragOver={handleDragOver}
+                onDrop={handleDragAndDrop}
+                onClick={() => document.getElementById("videoInput")?.click()}
+              >
+                {draggedFile ? (
+                  <div className="flex items-center space-x-2">
+                    <FaFile className="text-gray-500 text-lg" />
+                    <p className="text-gray-500 text-sm">{draggedFile.name}</p>
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-sm text-center">
+                    Drag MP4 file here or click to upload
+                  </p>
+                )}
+              </div>
+              <Input
+                id="videoInput"
+                type="file"
+                accept="video/mp4"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    handleFileUpload(file, "video");
+                  } else {
+                    alert("No file selected or invalid file.");
+                  }
+                }}
+                className="hidden"
+              />
+            </CardContent>
+            </Card>
+  
+            {/* Consent Form Card */}
+            <form onSubmit={handleSubmit}>
+              <Card className="card shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-gray-700 text-base font-normal">
+                    Below is a .docx file that concerns the rights of the candidates using this system. 
+                    It must be read and signed by the candidate before any analysis can take place. Upload the form in the area below.
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col items-center space-y-8">
+                    <a href="#" className="text-blue-500 underline">
+                      ConsentForm.docx
+                    </a>
+                    <div className="w-full">
+                      <Label htmlFor="consentForm" className="block text-gray-700 text-sm mb-1">
+                        Consent Form
+                      </Label>
+                      <Input
+                        id="consentForm"
+                        type="file"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            handleFileUpload(file, "consentForm"); // Only call if file exists
+                          } else {
+                            console.error("No file selected or invalid file.");
+                            alert("Please select a valid file.");
+                          }
+                        }}
+                        className="w-full border border-gray-300 p-2 rounded"
+                      />
+                    </div>
+                    <Button type="submit" className="w-full">
+                      Create Candidate
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </form>
+          </div>
         </div>
-      </main>
+      </div>
+      </div>
+
     </SidebarLayout>
   );
-}
+  
+};
+
+export default CreateCandidate;

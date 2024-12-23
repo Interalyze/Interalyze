@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Bar, BarChart, XAxis, YAxis, Cell } from "recharts";
 
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -42,24 +43,37 @@ const chartConfig = {
 
 interface PersonalityBarChartProps {
   newTraits?: {
-    openness?: number;
-    agreeableness?: number;
-    conscientiousness?: number;
-    extraversion?: number;
-    neuroticism?: number;
+    openness: number;
+    agreeableness: number;
+    conscientiousness: number;
+    extraversion: number;
+    neuroticism: number;
   };
 }
 
-export function PersonalityBarChart({ newTraits = {} }: PersonalityBarChartProps) {
-  const personalityData = useMemo(() => {
-    if (!newTraits) return [];
-    return Object.entries(newTraits)
-      .filter(([trait]) => chartConfig.hasOwnProperty(trait))
-      .map(([trait, confidence]) => ({
-        trait,
-        confidence: confidence ?? 0,
-        fill: chartConfig[trait as keyof typeof chartConfig]?.color || "hsl(var(--chart-default))",
-      }));
+export function PersonalityBarChart({ newTraits }: PersonalityBarChartProps) {
+  const placeholderData = {
+    openness: 0.85,
+    agreeableness: 0.70,
+    conscientiousness: 0.60,
+    extraversion: 0.50,
+    neuroticism: 0.30,
+  };
+
+  const [personalityData, setPersonalityData] = useState<
+    { trait: string; confidence: number; fill: string }[]
+  >([]);
+
+  useEffect(() => {
+    const traits = newTraits || placeholderData;
+
+    const updatedData = Object.entries(traits).map(([trait, confidence]) => ({
+      trait,
+      confidence,
+      fill: chartConfig[trait as keyof typeof chartConfig]?.color || "hsl(var(--chart-default))",
+    }));
+
+    setPersonalityData(updatedData);
   }, [newTraits]);
 
   return (
@@ -69,17 +83,14 @@ export function PersonalityBarChart({ newTraits = {} }: PersonalityBarChartProps
         <CardDescription>Big Five Personality Traits</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 flex justify-start items-start">
-        <div className="min-w-[600px] max-h-[225px]">
-          <ChartContainer config={chartConfig} className="max-h-[225px] min-w-[600px]">
+        <div className="w-[90%] h-[150px] max-w-[400px] max-h-[125px]">
+          <ChartContainer config={chartConfig}>
             <BarChart
               data={personalityData}
               layout="vertical"
-              width={600}
-              height={225}
               margin={{
                 left: 60,
               }}
-              className="max-h-[225px]"
             >
               <YAxis
                 dataKey="trait"
@@ -88,7 +99,7 @@ export function PersonalityBarChart({ newTraits = {} }: PersonalityBarChartProps
                 tickMargin={10}
                 axisLine={false}
                 tickFormatter={(value) =>
-                  chartConfig[value as keyof typeof chartConfig]?.label || value
+                  chartConfig[value as keyof typeof chartConfig]?.label
                 }
               />
               <XAxis type="number" domain={[0, 1]} hide />
