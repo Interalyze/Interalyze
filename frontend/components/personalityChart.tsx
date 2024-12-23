@@ -65,7 +65,7 @@ export function PersonalityBarChart({ newTraits = {} }: PersonalityBarChartProps
   return (
     <Card className="h-[21rem] w-full flex flex-col">
       <CardHeader className="flex-shrink-0">
-        <CardTitle>Personality Analysis</CardTitle>
+        <CardTitle>Instantaneous Personality Analysis</CardTitle>
         <CardDescription>Big Five Personality Traits</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 flex justify-start items-start">

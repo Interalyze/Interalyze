@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import {
   Card,
   CardHeader,
@@ -19,6 +19,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { PersonalityBarChart } from "@/components/personalityChart";
+import { PersonalityLineChart } from "@/components/personalityLineCharts";
 
 interface StressData {
   question: string;
@@ -94,6 +95,13 @@ export default function CandidateDashboard() {
   const [skills, setSkills] = useState<SkillData[]>([]);
   const [newQuestion, setNewQuestion] = useState<StressData | undefined>(undefined);
 
+  const personalityLineData = useMemo(() => {
+    return personalityChartData.map((data, index) => ({
+      time: transcript[index]?.startTime || index * 10,
+      ...data,
+    }));
+  }, [personalityChartData]);
+
   useEffect(() => {
     const fetchSkills = async () => {
       try {
@@ -109,7 +117,7 @@ export default function CandidateDashboard() {
 
         const skillsResult = await skillsResponse.json();
 
-        console.log("skills: "+ skillsResult.extracted_skills)
+        console.log("skills: " + skillsResult.extracted_skills);
         setSkills(skillsResult.extracted_skills || []);
       } catch (error) {
         console.error("Error fetching skills:", error);
@@ -139,7 +147,7 @@ export default function CandidateDashboard() {
         const stressData: StressData = {
           question: `Q${currentIndex + 1}`,
           stress: stressResult.stress_analysis?.[0]?.stress_level,
-          confidence: (stressResult.stress_analysis?.[0]?.confidence * 100),
+          confidence: stressResult.stress_analysis?.[0]?.confidence * 100,
         };
 
         setNewQuestion(stressData);
@@ -247,12 +255,10 @@ export default function CandidateDashboard() {
                 </video>
               </CardContent>
             </Card>
+            
+            <PersonalityLineChart personalityData={personalityLineData} />
 
-            <PersonalityBarChart
-              newTraits={personalityChartData[currentIndex]}
-            />
 
-            <StressBarChart newQuestion={newQuestion} currentIndex={currentIndex} />
           </div>
 
           <div className="space-y-6">
@@ -264,63 +270,71 @@ export default function CandidateDashboard() {
                 <p>Details about the person go here.</p>
               </CardContent>
             </Card>
-            <Card className="h-[31.5rem] w-full">
-  <CardHeader>
-    <CardTitle>Transcript</CardTitle>
-  </CardHeader>
-  <CardContent
-    className="overflow-y-auto h-full"
-    id="transcript-card"
-    style={{
-      maxHeight: 'calc(100% - 4rem)', // Adjust height to accommodate the header
-    }}
-  >
-    {transcript.map((segment, index) => (
-      <div
-        key={index}
-        className={`mb-4 ${
-          index <= currentIndex ? "font-bold" : "font-normal"
-        }`}
-        id={`transcript-item-${index}`}
-        onClick={() => handleTranscriptClick(index)}
-        style={{ cursor: "pointer" }}
-      >
-        <p>
-          <span className="text-gray-600">Question: </span>
-          {segment.question}
-        </p>
-        <p>
-          <span className="text-gray-600">Answer: </span>
-          {segment.answer}
-        </p>
-      </div>
-    ))}
-  </CardContent>
-</Card>
+            <Card className="h-[18.5rem] w-full">
+              <CardHeader>
+                <CardTitle>Transcript</CardTitle>
+              </CardHeader>
+              <CardContent
+                className="overflow-y-auto h-full"
+                id="transcript-card"
+                style={{
+                  maxHeight: "calc(100% - 4rem)", // Adjust height to accommodate the header
+                }}
+              >
+                {transcript.map((segment, index) => (
+                  <div
+                    key={index}
+                    className={`mb-4 ${
+                      index <= currentIndex ? "font-bold" : "font-normal"
+                    }`}
+                    id={`transcript-item-${index}`}
+                    onClick={() => handleTranscriptClick(index)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <p>
+                      <span className="text-gray-600">Question: </span>
+                      {segment.question}
+                    </p>
+                    <p>
+                      <span className="text-gray-600">Answer: </span>
+                      {segment.answer}
+                    </p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+            <PersonalityBarChart
+              newTraits={personalityChartData[currentIndex]}
+            />
 
-
+            <StressBarChart
+              newQuestion={newQuestion}
+              currentIndex={currentIndex}
+            />
           </div>
+          
         </div>
 
         <div className="mt-6 h-[4rem] w-full col-span-2 flex items-center gap-4">
           <span className="text-lg font-semibold">Skills:</span>
           <Card className="flex-1 h-[4rem] flex items-center">
-          <CardContent className="flex items-center gap-4 flex-wrap w-full p-0 pl-4">
-  {skills
-    .filter((skill) => skill.skill_name.length >= 3) // Exclude skills with names shorter than 3 characters
-    .sort((a, b) => b.confidence - a.confidence) // Sort by confidence in descending order
-    .map((skill, index) => (
-      <Badge
-        className="h-[2rem]"
-        key={index}
-        variant="secondary"
-        style={{ opacity: Math.max(0.5, skill.confidence) }} // Ensure visibility with a minimum opacity
-      >
-        {skill.skill_name || "Unknown Skill"}
-      </Badge>
-    ))}
-</CardContent>
+            <CardContent className="flex items-center gap-4 flex-wrap w-full p-0 pl-4">
+              {skills
+                .filter((skill) => skill.skill_name.length >= 3) // Exclude skills with names shorter than 3 characters
+                .sort((a, b) => b.confidence - a.confidence) // Sort by confidence in descending order
+                .map((skill, index) => (
+                  <Badge
+                    className="h-[2rem]"
+                    key={index}
+                    variant="secondary"
+                    style={{ opacity: Math.max(0.5, skill.confidence) }} // Ensure visibility with a minimum opacity
+                  >
+                    {skill.skill_name || "Unknown Skill"}
+                  </Badge>
+                ))}
+            </CardContent>
           </Card>
+          
         </div>
       </main>
     </SidebarLayout>
