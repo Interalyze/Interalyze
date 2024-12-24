@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.2",
+    "@radix-ui/react-label": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.1",
     "@shadcn/ui": "^0.0.4",
     "bootstrap": "^5.3.3",
@@ -19,6 +20,7 @@
     "next": "15.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-icons": "^5.4.0",
     "recharts": "^2.15.0",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7"
@@ -36,8 +38,12 @@
     "typescript": "^5"
   },
   "options": {
-    "allowedHosts": ["localhost", ".localhost","*"]
-    ,"proxy": "http://127.0.0.1:8000"
+    "allowedHosts": [
+      "localhost",
+      ".localhost",
+      "*"
+    ],
+    "proxy": "http://127.0.0.1:8000"
   },
   "proxy": "http://127.0.0.1:8000"
 }
