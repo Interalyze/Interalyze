@@ -1,7 +1,12 @@
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export default function Sidebar() {
+import Link from "next/link";
+
+interface SidebarProps {
+  currentPath: string; // Accept the current path as a prop
+}
+
+export default function Sidebar({ currentPath }: SidebarProps) {
   return (
     <aside className="sidebar">
       {/* Logo */}
@@ -12,31 +17,62 @@ export default function Sidebar() {
       {/* User Profile */}
       <div className="sidebar-profile">
         <Avatar className="avatar">
-          <AvatarImage src="/path-to-profile.jpg" alt="Ahmet Ince" />
+        <AvatarImage src="/interviewer.jpg" alt="Aysel Tuzluca" className="avatar-image" />
           <AvatarFallback>AI</AvatarFallback>
         </Avatar>
-        <p className="name">Ahmet Ince</p>
+        <p className="name">Aysel Tuzluca</p>
       </div>
 
       {/* Navigation Links */}
       <nav className="sidebar-nav">
         <ul>
           <li>
-            <Button variant="ghost" className="active">
+            <Link
+              href="/"
+              className={`sidebar-link ${currentPath === "/" ? "active" : ""}`}
+            >
               Overview
-            </Button>
+            </Link>
           </li>
           <li>
-            <Button variant="ghost">Candidates</Button>
+            <Link
+              href="/candidates"
+              className={`sidebar-link ${
+                currentPath === "/candidates" ? "active" : ""
+              }`}
+            >
+              Candidates
+            </Link>
           </li>
           <li>
-            <Button variant="ghost">Create Candidate</Button>
+            <Link
+              href="/create"
+              className={`sidebar-link ${
+                currentPath === "/create" ? "active" : ""
+              }`}
+            >
+              Create Candidate
+            </Link>
           </li>
           <li>
-            <Button variant="ghost">Generate Reports</Button>
+            <Link
+              href="/reports"
+              className={`sidebar-link ${
+                currentPath === "/reports" ? "active" : ""
+              }`}
+            >
+              Generate Reports
+            </Link>
           </li>
           <li>
-            <Button variant="ghost">My Company</Button>
+            <Link
+              href="/company"
+              className={`sidebar-link ${
+                currentPath === "/company" ? "active" : ""
+              }`}
+            >
+              My Company
+            </Link>
           </li>
         </ul>
       </nav>

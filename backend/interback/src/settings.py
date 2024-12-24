@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'video_play',
     'corsheaders',  # Added corsheaders app
+    'ai_processing',
 ]
 
 MIDDLEWARE = [
@@ -144,7 +145,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS Configuration
+# CORS ConfigurationF
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React development server
     "http://127.0.0.1:3000",
@@ -152,14 +153,3 @@ CORS_ALLOWED_ORIGINS = [
 
 # Allow credentials (optional, only if required)
 CORS_ALLOW_CREDENTIALS = True
-LOGIN_REDIRECT_URL = '/'
-
-# CORS Configuration
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React development server
-    "http://127.0.0.1:3000",
-]
-
-# Allow credentials (optional, only if required)
-CORS_ALLOW_CREDENTIALS = True
-LOGIN_REDIRECT_URL = '/'
