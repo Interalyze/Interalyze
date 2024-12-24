@@ -4,12 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export default function Sidebar() {
   return (
     <aside className="sidebar">
-      {/* Logo */}
       <div className="sidebar-logo">
         <h1>InterAlyze</h1>
       </div>
 
-      {/* User Profile */}
       <div className="sidebar-profile">
         <Avatar className="avatar">
           <AvatarImage src="/path-to-profile.jpg" alt="Ahmet Ince" />
@@ -18,7 +16,6 @@ export default function Sidebar() {
         <p className="name">Ahmet Ince</p>
       </div>
 
-      {/* Navigation Links */}
       <nav className="sidebar-nav">
         <ul>
           <li>

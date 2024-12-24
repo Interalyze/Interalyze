@@ -47,9 +47,6 @@ interface PersonalityLineChartProps {
   personalityData: PersonalityDataPoint[];
 }
 
-/**
- * Custom tooltip component that displays the hovered trait, time, and confidence.
- */
 function CustomTooltip({
   active,
   payload,
@@ -97,10 +94,6 @@ export function PersonalityLineChart({ personalityData }: PersonalityLineChartPr
                     margin={{ left: -30, right: 24 }}
                     width={600}
                     height={100}
-                    /**
-                     * Give each chart the same syncId so they all
-                     * highlight the same index on hover.
-                     */
                     syncId="personalitySync"
                   >
                     <CartesianGrid strokeDasharray="3 3" />

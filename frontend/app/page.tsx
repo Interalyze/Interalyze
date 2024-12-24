@@ -1,4 +1,4 @@
-/*"use client";
+"use client";
 
 import { useEffect, useRef, useState, useMemo } from "react";
 import {
@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import SidebarLayout from "@/components/sidebarlayout";
-import { StressBarChart } from "@/components/stressChart";
+import { StressBarChart } from "@/components/stressChart"; // <--- Updated usage
 import { StressPieChart } from "@/components/stressPieChart";
 import {
   Breadcrumb,
@@ -23,8 +23,8 @@ import { PersonalityLineChart } from "@/components/personalityLineCharts";
 
 interface StressData {
   question: string;
-  stress: string;
-  confidence: number; // from 0 to 100
+  stress: string;       
+  confidence: number;   
 }
 
 interface PersonalityData {
@@ -38,9 +38,8 @@ interface PersonalityData {
 
 interface SkillData {
   skill_name: string;
-  confidence: number; // from 0 to 1, or 0 to 100 (depends on your API)
+  confidence: number; 
 }
-
 const transcript = [
   {
     question: "So how are you doing?",
@@ -86,8 +85,6 @@ const transcript = [
   },
 ];
 
-
-// Cycle through these 5 colors for the skill badges
 const skillBadgeColors = [
   "hsl(var(--chart-1))",
   "hsl(var(--chart-2))",
@@ -99,23 +96,14 @@ const skillBadgeColors = [
 export default function CandidateDashboard() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Current question index (based on transcript)
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  // Personality states
   const [personalityChartData, setPersonalityChartData] = useState<PersonalityData[]>([]);
 
-  // Stress states
   const [allStressData, setAllStressData] = useState<StressData[]>([]);
-  const [newQuestion, setNewQuestion] = useState<StressData | undefined>(undefined);
 
-  // Skills
   const [skills, setSkills] = useState<SkillData[]>([]);
 
-  // ---------------------------------------------------------------------------------
-  // Transform personality data for the line chart by adding "time"
-  // (e.g., using startTime from transcript or index-based)
-  // ---------------------------------------------------------------------------------
   const personalityLineData = useMemo(() => {
     return personalityChartData.map((data, index) => ({
       time: transcript[index]?.startTime ?? index * 10,
@@ -123,9 +111,6 @@ export default function CandidateDashboard() {
     }));
   }, [personalityChartData]);
 
-  // ---------------------------------------------------------------------------------
-  // Fetch skills (only once on mount)
-  // ---------------------------------------------------------------------------------
   useEffect(() => {
     const fetchSkills = async () => {
       try {
@@ -137,7 +122,6 @@ export default function CandidateDashboard() {
         });
 
         const skillsResult = await skillsResponse.json();
-        console.log("skills: ", skillsResult.extracted_skills);
         setSkills(skillsResult.extracted_skills || []);
       } catch (error) {
         console.error("Error fetching skills:", error);
@@ -147,9 +131,6 @@ export default function CandidateDashboard() {
     fetchSkills();
   }, []);
 
-  // ---------------------------------------------------------------------------------
-  // Fetch Personality Data (multiple calls, one for each question)
-  // ---------------------------------------------------------------------------------
   useEffect(() => {
     const fetchPersonalityForAnswer = async (answer: string) => {
       const response = await fetch("http://127.0.0.1:8000/api/analyze-personality/", {
@@ -158,7 +139,6 @@ export default function CandidateDashboard() {
         body: JSON.stringify({ texts: [answer] }),
       });
       const data = await response.json();
-      // data.personality_scores is typically an array
       return data.personality_scores?.[0] || null;
     };
 
@@ -180,7 +160,6 @@ export default function CandidateDashboard() {
               neuroticism: result.neuroticism || 0,
             });
 
-            // Update state so the UI updates question-by-question
             setPersonalityChartData([...newData]);
           }
         } catch (err) {
@@ -191,17 +170,11 @@ export default function CandidateDashboard() {
 
     analyzeAllQuestionsInSuccession();
   }, []);
-
-  // ---------------------------------------------------------------------------------
-  // Fetch Stress Data (SINGLE call for the entire transcript)
-  // ---------------------------------------------------------------------------------
   useEffect(() => {
     const fetchAllStressData = async () => {
       try {
-        // Gather all answers
         const allAnswers = transcript.map((item) => item.answer);
 
-        // Send them in one request
         const stressResponse = await fetch("http://127.0.0.1:8000/api/analyze-stress/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -209,21 +182,15 @@ export default function CandidateDashboard() {
         });
         const stressResult = await stressResponse.json();
 
-        // Transform the result into our local type
         const newStressData: StressData[] = stressResult.stress_analysis.map(
           (analysis: any, i: number) => ({
             question: `Q${i + 1}`,
             stress: analysis?.stress_level || "Unknown",
-            confidence: (analysis?.confidence ?? 0) * 100, // scale 0-1 to 0-100
+            confidence: (analysis?.confidence ?? 0) * 100, 
           })
         );
 
         setAllStressData(newStressData);
-
-        // Optionally set initial stress to Q1
-        if (newStressData.length > 0) {
-          setNewQuestion(newStressData[0]);
-        }
       } catch (error) {
         console.error("Error fetching all stress data:", error);
       }
@@ -231,40 +198,6 @@ export default function CandidateDashboard() {
 
     fetchAllStressData();
   }, []);
-
-  // ---------------------------------------------------------------------------------
-  // Whenever currentIndex changes, pick the correct stress data from allStressData
-  // Also scroll transcript to highlight the active segment
-  // ---------------------------------------------------------------------------------
-  useEffect(() => {
-    // If we have it, update
-    if (allStressData[currentIndex]) {
-      setNewQuestion(allStressData[currentIndex]);
-    }
-
-    // Scroll transcript to highlight current question
-    const currentElement = document.querySelector(`#transcript-item-${currentIndex}`);
-    const transcriptCard = document.getElementById("transcript-card");
-    if (currentElement && transcriptCard) {
-      const { offsetTop } = currentElement as HTMLElement;
-      transcriptCard.scrollTo({
-        top: offsetTop - transcriptCard.offsetTop,
-        behavior: "smooth",
-      });
-    }
-  }, [allStressData, currentIndex]);
-
-  // ---------------------------------------------------------------------------------
-  // Handle transcript click & video progress
-  // ---------------------------------------------------------------------------------
-  const handleTranscriptClick = (index: number) => {
-    const videoElement = document.querySelector("video");
-    if (videoElement) {
-      videoElement.currentTime = transcript[index].startTime;
-    }
-    setCurrentIndex(index);
-  };
-
   const handleTimeUpdate = () => {
     if (!videoRef.current) return;
     const currentTime = videoRef.current.currentTime;
@@ -277,13 +210,29 @@ export default function CandidateDashboard() {
       setCurrentIndex(segmentIndex);
     }
   };
+  const handleTranscriptClick = (index: number) => {
+    const videoElement = document.querySelector("video");
+    if (videoElement) {
+      videoElement.currentTime = transcript[index].startTime;
+    }
+    setCurrentIndex(index);
+  };
+  useEffect(() => {
+    const currentElement = document.querySelector(`#transcript-item-${currentIndex}`);
+    const transcriptCard = document.getElementById("transcript-card");
+    if (currentElement && transcriptCard) {
+      const { offsetTop } = currentElement as HTMLElement;
+      transcriptCard.scrollTo({
+        top: offsetTop - transcriptCard.offsetTop,
+        behavior: "smooth",
+      });
+    }
+  }, [currentIndex]);
 
-  // ---------------------------------------------------------------------------------
-  // Render
-  // ---------------------------------------------------------------------------------
   return (
     <SidebarLayout>
       <main className="flex-1 bg-gray-100 p-6">
+        {/* Breadcrumbs */}
         <Breadcrumb className="mb-4">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -320,51 +269,48 @@ export default function CandidateDashboard() {
           </div>
 
           <div className="space-y-6">
-          <Card className="h-[10.5rem] w-full">
-  <CardContent className="h-full p-6">
-    <div className="flex h-full items-center gap-4">
-      <img
-        src="https://heroshotphotography.com/wp-content/uploads/2023/03/male-linkedin-corporate-headshot-on-white-square-1024x1024.jpg"
-        alt="Mert Müdür Profile"
-        className="h-full max-h-[8rem] w-auto rounded object-cover"
-      />
+            <Card className="h-[10.5rem] w-full">
+              <CardContent className="h-full p-6">
+                <div className="flex h-full items-center gap-4">
+                  <img
+                    src="https://heroshotphotography.com/wp-content/uploads/2023/03/male-linkedin-corporate-headshot-on-white-square-1024x1024.jpg"
+                    alt="Mert Müdür Profile"
+                    className="h-full max-h-[8rem] w-auto rounded object-cover"
+                  />
+                  <div className="flex w-full h-full items-center justify-between">
+                    <div className="flex flex-col">
+                      <h2 className="text-base font-semibold leading-none m-0">
+                        Mert Müdür
+                      </h2>
+                      <p className="text-sm text-muted-foreground">Software Engineer</p>
+                      <div className="mt-2 text-sm leading-tight space-y-1">
+                        <p>
+                          <strong>Age:</strong> 32
+                        </p>
+                        <p>
+                          <strong>E-Mail:</strong> mert.müdür@gmail.com
+                        </p>
+                        <p>
+                          <strong>Date of Birth:</strong> 15/05/1998
+                        </p>
+                        <p>
+                          <strong>Current Status:</strong> Evaluating
+                        </p>
+                      </div>
+                    </div>
 
-      <div className="flex w-full h-full items-center justify-between">
-        <div className="flex flex-col">
-          <h2 className="text-base font-semibold leading-none m-0">Mert Müdür</h2>
-          <p className="text-sm text-muted-foreground">Software Engineer</p>
-
-          <div className="mt-2 text-sm leading-tight space-y-1">
-            <p>
-              <strong>Age:</strong> 32
-            </p>
-            <p>
-              <strong>E-Mail:</strong> mert.müdür@gmail.com
-            </p>
-            <p>
-              <strong>Date of Birth:</strong> 15/05/1998
-            </p>
-            <p>
-              <strong>Current Status:</strong> Evaluating
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-end gap-10">
-          <a href="#" className="text-sm text-blue-600 hover:underline">
-            View Resume
-          </a>
-          <a href="#" className="text-sm text-blue-600 hover:underline">
-            Change Details
-          </a>
-        </div>
-      </div>
-    </div>
-  </CardContent>
-</Card>
-
-
-
+                    <div className="flex flex-col items-end gap-10">
+                      <a href="#" className="text-sm text-blue-600 hover:underline">
+                        View Resume
+                      </a>
+                      <a href="#" className="text-sm text-blue-600 hover:underline">
+                        Change Details
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             <Card className="h-[18.5rem] w-full">
               <CardHeader>
@@ -374,7 +320,7 @@ export default function CandidateDashboard() {
                 className="overflow-y-auto h-full"
                 id="transcript-card"
                 style={{
-                  maxHeight: "calc(100% - 4rem)", // accommodate the header
+                  maxHeight: "calc(100% - 4rem)",
                 }}
               >
                 {transcript.map((segment, index) => (
@@ -401,8 +347,7 @@ export default function CandidateDashboard() {
             </Card>
 
             <PersonalityBarChart newTraits={personalityChartData[currentIndex]} />
-
-            <StressBarChart newQuestion={newQuestion} currentIndex={currentIndex} />
+            <StressBarChart allStressData={allStressData} />
           </div>
         </div>
 
@@ -411,9 +356,7 @@ export default function CandidateDashboard() {
           <Card className="flex-1 h-[4rem] flex items-center">
             <CardContent className="flex items-center gap-4 flex-wrap w-full p-0 pl-4">
               {skills
-                // Exclude extremely short skill names if desired
                 .filter((skill) => skill.skill_name.length >= 3)
-                // Sort descending by confidence, if you prefer
                 .sort((a, b) => b.confidence - a.confidence)
                 .map((skill, index) => {
                   const color = skillBadgeColors[index % skillBadgeColors.length];
@@ -425,8 +368,6 @@ export default function CandidateDashboard() {
                       style={{
                         backgroundColor: color,
                         color: "#fff",
-                        // If your API returns confidence in [0..1], scale it up or keep it in [0..1].
-                        // If it's in [0..1], multiply by 100 or adjust as needed.
                         opacity: Math.max(0.5, skill.confidence),
                       }}
                     >
@@ -440,9 +381,10 @@ export default function CandidateDashboard() {
       </main>
     </SidebarLayout>
   );
-}*/
+}
 
-"use client";
+
+/*"use client";
 
 import { useEffect, useRef, useState, useMemo } from "react";
 import {
@@ -453,7 +395,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import SidebarLayout from "@/components/sidebarlayout";
-import { StressBarChart } from "@/components/stressChart";
+import { StressBarChart } from "@/components/stressChart"; // <-- Updated chart
 import { StressPieChart } from "@/components/stressPieChart";
 import {
   Breadcrumb,
@@ -485,6 +427,7 @@ interface SkillData {
   confidence: number;
 }
 
+// Temporary placeholder transcript
 const transcript = [
   {
     question: "So how are you doing?",
@@ -530,6 +473,7 @@ const transcript = [
   },
 ];
 
+// Skill badge colors
 const skillBadgeColors = [
   "hsl(var(--chart-1))",
   "hsl(var(--chart-2))",
@@ -539,17 +483,22 @@ const skillBadgeColors = [
 ];
 
 export default function CandidateDashboard() {
+  // Video reference for time updates
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
+  // Current transcript index
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
+  // Personality data: per question
   const [personalityChartData, setPersonalityChartData] = useState<PersonalityData[]>([]);
 
+  // Stress data: entire array
   const [allStressData, setAllStressData] = useState<StressData[]>([]);
-  const [newQuestion, setNewQuestion] = useState<StressData | undefined>(undefined);
 
+  // Skills array
   const [skills, setSkills] = useState<SkillData[]>([]);
 
+  // Personality line chart data
   const personalityLineData = useMemo(() => {
     return personalityChartData.map((data, index) => ({
       time: transcript[index]?.startTime ?? index * 10,
@@ -557,9 +506,11 @@ export default function CandidateDashboard() {
     }));
   }, [personalityChartData]);
 
+  // Fetch skills once
   useEffect(() => {
     const fetchSkills = async () => {
       try {
+        // Combine all answers
         const answersOnly = transcript.map((item) => item.answer).join(" ");
         const skillsResponse = await fetch("http://127.0.0.1:8000/api/skills-analysis/", {
           method: "POST",
@@ -576,13 +527,13 @@ export default function CandidateDashboard() {
 
     fetchSkills();
   }, []);
+
+  // Fetch Personality Data for All questions
   useEffect(() => {
     const fetchAllPersonalityData = async () => {
       try {
-        // Gather all answers
         const allAnswers = transcript.map((item) => item.answer);
 
-        // Send them all in one request
         const personalityResponse = await fetch("http://127.0.0.1:8000/api/analyze-personality/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -610,6 +561,7 @@ export default function CandidateDashboard() {
     fetchAllPersonalityData();
   }, []);
 
+  // Fetch Stress Data for All questions
   useEffect(() => {
     const fetchAllStressData = async () => {
       try {
@@ -631,10 +583,6 @@ export default function CandidateDashboard() {
         );
 
         setAllStressData(newStressData);
-
-        if (newStressData.length > 0) {
-          setNewQuestion(newStressData[0]);
-        }
       } catch (error) {
         console.error("Error fetching all stress data:", error);
       }
@@ -643,11 +591,32 @@ export default function CandidateDashboard() {
     fetchAllStressData();
   }, []);
 
-  useEffect(() => {
-    if (allStressData[currentIndex]) {
-      setNewQuestion(allStressData[currentIndex]);
-    }
+  // Update currentIndex based on video time
+  const handleTimeUpdate = () => {
+    if (!videoRef.current) return;
+    const currentTime = videoRef.current.currentTime;
 
+    // Find which transcript segment we are in
+    const segmentIndex = transcript.findIndex(
+      (segment) => currentTime >= segment.startTime && currentTime <= segment.endTime
+    );
+
+    if (segmentIndex !== -1 && segmentIndex !== currentIndex) {
+      setCurrentIndex(segmentIndex);
+    }
+  };
+
+  // Handle transcript item click to jump in video
+  const handleTranscriptClick = (index: number) => {
+    const videoElement = document.querySelector("video");
+    if (videoElement) {
+      videoElement.currentTime = transcript[index].startTime;
+    }
+    setCurrentIndex(index);
+  };
+
+  // Scroll to active transcript when currentIndex changes
+  useEffect(() => {
     const currentElement = document.querySelector(`#transcript-item-${currentIndex}`);
     const transcriptCard = document.getElementById("transcript-card");
     if (currentElement && transcriptCard) {
@@ -657,28 +626,7 @@ export default function CandidateDashboard() {
         behavior: "smooth",
       });
     }
-  }, [allStressData, currentIndex]);
-
-  const handleTranscriptClick = (index: number) => {
-    const videoElement = document.querySelector("video");
-    if (videoElement) {
-      videoElement.currentTime = transcript[index].startTime;
-    }
-    setCurrentIndex(index);
-  };
-
-  const handleTimeUpdate = () => {
-    if (!videoRef.current) return;
-    const currentTime = videoRef.current.currentTime;
-
-    const segmentIndex = transcript.findIndex(
-      (segment) => currentTime >= segment.startTime && currentTime <= segment.endTime
-    );
-
-    if (segmentIndex !== -1 && segmentIndex !== currentIndex) {
-      setCurrentIndex(segmentIndex);
-    }
-  };
+  }, [currentIndex]);
 
   return (
     <SidebarLayout>
@@ -799,12 +747,9 @@ export default function CandidateDashboard() {
             </Card>
 
             <PersonalityBarChart newTraits={personalityChartData[currentIndex]} />
-
-            <StressBarChart newQuestion={newQuestion} currentIndex={currentIndex} />
+            <StressBarChart allStressData={allStressData} />
           </div>
         </div>
-
-        {/* Skills row */}
         <div className="mt-6 h-[4rem] w-full col-span-2 flex items-center gap-4">
           <span className="text-lg font-semibold">Skills:</span>
           <Card className="flex-1 h-[4rem] flex items-center">
@@ -835,5 +780,198 @@ export default function CandidateDashboard() {
       </main>
     </SidebarLayout>
   );
+}"use client";
+
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ChartContainer } from "@/components/ui/chart";
+
+type QuestionData = {
+  question: string;
+  stress: string;     // e.g., "Not Stressed" or "Stressed"
+  confidence: number; // e.g., a number in [0..100]
+};
+
+interface StressBarChartProps {
+  allStressData: QuestionData[]; // entire array
 }
 
+const chartConfig = {
+  confidence: {
+    label: "Confidence",
+    color: "hsl(var(--chart-blue))",
+  },
+};
+
+export function StressBarChart({ allStressData }: StressBarChartProps) {
+  // Transform each question’s data for chart display:
+  // - If "Not Stressed": set bar around ~100 - confidence => closer to "Calm"
+  // - If "Stressed":     set bar around ~100 + confidence => closer to "Stressed"
+  // Adjust as you see fit. 
+  const processedData = allStressData.map((item, idx) => {
+    const adjustedConfidence =
+      item.stress === "Not Stressed"
+        ? Math.max(100 - item.confidence, 5)
+        : Math.max(100 + item.confidence, 5);
+
+    return {
+      question: item.question || `Q${idx + 1}`,
+      stress: item.stress,
+      confidence: adjustedConfidence,
+    };
+  });
+
+  return (
+    <Card className="h-[21rem] w-full flex flex-col">
+      <CardHeader className="flex-shrink-0">
+        <CardTitle>Stress Analysis</CardTitle>
+        <CardDescription>Stress levels per question</CardDescription>
+      </CardHeader>
+
+      <CardContent className="flex-1 flex justify-start items-center">
+        <div className="w-[90%] h-[250px] max-w-[400px]">
+          <ChartContainer config={chartConfig} className="max-h-[225px] min-w-[600px]">
+            <BarChart width={400} height={250} data={processedData}>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis
+                dataKey="question"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={10}
+              />
+              <YAxis
+                type="number"
+                domain={[0, 200]}
+                ticks={[0, 100, 200]}
+                tickFormatter={(value) => {
+                  if (value === 0) return "Calm";
+                  if (value === 100) return "Average";
+                  if (value === 200) return "Stressed";
+                  return "";
+                }}
+              />
+              <Bar dataKey="confidence" radius={5}>
+                {processedData.map((item, index) => (
+                  <Cell
+                    key={index}
+                    fill={
+                      item.stress === "Not Stressed"
+                        ? "hsl(var(--chart-green))"
+                        : item.stress === "Stressed"
+                        ? "hsl(var(--chart-red))"
+                        : "hsl(var(--chart-gray))"
+                    }
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ChartContainer>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+"use client";
+
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ChartContainer } from "@/components/ui/chart";
+
+type QuestionData = {
+  question: string;
+  stress: string;     // e.g., "Not Stressed" or "Stressed"
+  confidence: number; // e.g., a number in [0..100]
+};
+
+interface StressBarChartProps {
+  allStressData: QuestionData[]; // entire array
+}
+
+const chartConfig = {
+  confidence: {
+    label: "Confidence",
+    color: "hsl(var(--chart-blue))",
+  },
+};
+
+export function StressBarChart({ allStressData }: StressBarChartProps) {
+  // Transform each question’s data for chart display:
+  // - If "Not Stressed": set bar around ~100 - confidence => closer to "Calm"
+  // - If "Stressed":     set bar around ~100 + confidence => closer to "Stressed"
+  // Adjust as you see fit. 
+  const processedData = allStressData.map((item, idx) => {
+    const adjustedConfidence =
+      item.stress === "Not Stressed"
+        ? Math.max(100 - item.confidence, 5)
+        : Math.max(100 + item.confidence, 5);
+
+    return {
+      question: item.question || `Q${idx + 1}`,
+      stress: item.stress,
+      confidence: adjustedConfidence,
+    };
+  });
+
+  return (
+    <Card className="h-[21rem] w-full flex flex-col">
+      <CardHeader className="flex-shrink-0">
+        <CardTitle>Stress Analysis</CardTitle>
+        <CardDescription>Stress levels per question</CardDescription>
+      </CardHeader>
+
+      <CardContent className="flex-1 flex justify-start items-center">
+        <div className="w-[90%] h-[250px] max-w-[400px]">
+          <ChartContainer config={chartConfig} className="max-h-[225px] min-w-[600px]">
+            <BarChart width={400} height={250} data={processedData}>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis
+                dataKey="question"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={10}
+              />
+              <YAxis
+                type="number"
+                domain={[0, 200]}
+                ticks={[0, 100, 200]}
+                tickFormatter={(value) => {
+                  if (value === 0) return "Calm";
+                  if (value === 100) return "Average";
+                  if (value === 200) return "Stressed";
+                  return "";
+                }}
+              />
+              <Bar dataKey="confidence" radius={5}>
+                {processedData.map((item, index) => (
+                  <Cell
+                    key={index}
+                    fill={
+                      item.stress === "Not Stressed"
+                        ? "hsl(var(--chart-green))"
+                        : item.stress === "Stressed"
+                        ? "hsl(var(--chart-red))"
+                        : "hsl(var(--chart-gray))"
+                    }
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ChartContainer>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+*/

@@ -11,15 +11,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-// Define the data type for a question
 type QuestionData = {
   question: string;
-  stress: string; // "Stressed" or "Not Stressed"
+  stress: string; 
 };
 
 interface StressPieChartProps {
-  newQuestion?: QuestionData; // Optional prop for new question
-  currentIndex: number; // Index of the current question
+  newQuestion?: QuestionData; 
+  currentIndex: number; 
 }
 
 export function StressPieChart({ newQuestion, currentIndex }: StressPieChartProps) {
