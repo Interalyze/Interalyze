@@ -191,40 +191,6 @@ export default function CandidateDashboard() {
         );
 
         setAllStressData(newStressData);
-        const stressData: StressData = {
-          question: `Q${currentIndex + 1}`,
-          stress: stressResult.stress_analysis?.[0]?.stress_level,
-          confidence: (stressResult.stress_analysis?.[0]?.confidence * 100),
-        };
-
-        setNewQuestion(stressData);
-
-        const personalityResponse = await fetch(
-          "http://127.0.0.1:8000/api/analyze-personality/",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ texts: [currentAnswer] }),
-          }
-        );
-        
-        const personalityResult = await personalityResponse.json();
-
-        setPersonalityChartData((prevData) => [
-          ...prevData,
-          {
-            question: `Q${currentIndex + 1}`,
-            openness: personalityResult.personality_scores?.[0]?.openness || 0,
-            agreeableness:
-              personalityResult.personality_scores?.[0]?.agreeableness || 0,
-            conscientiousness:
-              personalityResult.personality_scores?.[0]?.conscientiousness || 0,
-            extraversion:
-              personalityResult.personality_scores?.[0]?.extraversion || 0,
-            neuroticism:
-              personalityResult.personality_scores?.[0]?.neuroticism || 0,
-          },
-        ]);
       } catch (error) {
         console.error("Error fetching all stress data:", error);
       }
@@ -782,39 +748,6 @@ export default function CandidateDashboard() {
 
             <PersonalityBarChart newTraits={personalityChartData[currentIndex]} />
             <StressBarChart allStressData={allStressData} />
-            <Card className="h-[31.5rem] w-full">
-  <CardHeader>
-    <CardTitle>Transcript</CardTitle>
-  </CardHeader>
-  <CardContent
-    className="overflow-y-auto h-full"
-    id="transcript-card"
-    style={{
-      maxHeight: 'calc(100% - 4rem)', // Adjust height to accommodate the header
-    }}
-  >
-    {transcript.map((segment, index) => (
-      <div
-        key={index}
-        className={`mb-4 ${
-          index <= currentIndex ? "font-bold" : "font-normal"
-        }`}
-        id={`transcript-item-${index}`}
-        onClick={() => handleTranscriptClick(index)}
-        style={{ cursor: "pointer" }}
-      >
-        <p>
-          <span className="text-gray-600">Question: </span>
-          {segment.question}
-        </p>
-        <p>
-          <span className="text-gray-600">Answer: </span>
-          {segment.answer}
-        </p>
-      </div>
-    ))}
-  </CardContent>
-</Card>
           </div>
         </div>
         <div className="mt-6 h-[4rem] w-full col-span-2 flex items-center gap-4">
@@ -1042,5 +975,3 @@ export function StressBarChart({ allStressData }: StressBarChartProps) {
   );
 }
 */
-
-}
