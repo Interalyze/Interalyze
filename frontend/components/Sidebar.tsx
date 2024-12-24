@@ -9,12 +9,10 @@ interface SidebarProps {
 export default function Sidebar({ currentPath }: SidebarProps) {
   return (
     <aside className="sidebar">
-      {/* Logo */}
       <div className="sidebar-logo">
         <h1>InterAlyze</h1>
       </div>
 
-      {/* User Profile */}
       <div className="sidebar-profile">
         <Avatar className="avatar">
         <AvatarImage src="/interviewer.jpg" alt="Aysel Tuzluca" className="avatar-image" />
@@ -23,7 +21,6 @@ export default function Sidebar({ currentPath }: SidebarProps) {
         <p className="name">Aysel Tuzluca</p>
       </div>
 
-      {/* Navigation Links */}
       <nav className="sidebar-nav">
         <ul>
           <li>

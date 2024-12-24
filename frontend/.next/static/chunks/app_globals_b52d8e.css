@@ -439,6 +439,10 @@ body {
   grid-column: span 2 / span 2;
 }
 
+.m-0 {
+  margin: 0;
+}
+
 .my-0\.5 {
   margin-top: .125rem;
   margin-bottom: .125rem;
@@ -454,6 +458,14 @@ body {
 
 .mb-4 {
   margin-bottom: 1rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.mt-2 {
+  margin-top: .5rem;
 }
 
 .mt-4 {
@@ -524,6 +536,10 @@ body {
   height: 10.5rem;
 }
 
+.h-\[18\.5rem\] {
+  height: 18.5rem;
+}
+
 .h-\[21rem\] {
   height: 21rem;
 }
@@ -536,12 +552,12 @@ body {
   height: 2rem;
 }
 
-.h-\[31\.5rem\] {
-  height: 31.5rem;
-}
-
 .h-\[4rem\] {
   height: 4rem;
+}
+
+.h-\[53rem\] {
+  height: 53rem;
 }
 
 .h-full {
@@ -554,6 +570,10 @@ body {
 
 .max-h-\[225px\] {
   max-height: 225px;
+}
+
+.max-h-\[8rem\] {
+  max-height: 8rem;
 }
 
 .min-h-screen {
@@ -590,6 +610,10 @@ body {
 
 .w-\[90\%\] {
   width: 90%;
+}
+
+.w-auto {
+  width: auto;
 }
 
 .w-full {
@@ -672,6 +696,10 @@ body {
   gap: .375rem;
 }
 
+.gap-10 {
+  gap: 2.5rem;
+}
+
 .gap-2 {
   gap: .5rem;
 }
@@ -706,6 +734,12 @@ body {
   --tw-space-x-reverse: 0;
   margin-right: calc(1rem * var(--tw-space-x-reverse));
   margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.space-y-1 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(.25rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(.25rem * var(--tw-space-y-reverse));
 }
 
 .space-y-1\.5 > :not([hidden]) ~ :not([hidden]) {
@@ -862,8 +896,17 @@ body {
   background-color: #0000;
 }
 
+.bg-white {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
 .bg-opacity-50 {
   --tw-bg-opacity: .5;
+}
+
+.object-cover {
+  object-fit: cover;
 }
 
 .p-0 {
@@ -946,6 +989,10 @@ body {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
 }
 
+.text-\[12pt\] {
+  font-size: 12pt;
+}
+
 .text-base {
   font-size: 1rem;
   line-height: 1.5rem;
@@ -991,6 +1038,10 @@ body {
   line-height: 1;
 }
 
+.leading-tight {
+  line-height: 1.25;
+}
+
 .tracking-tight {
   letter-spacing: -.025em;
 }
@@ -998,6 +1049,11 @@ body {
 .text-blue-500 {
   --tw-text-opacity: 1;
   color: rgb(59 130 246 / var(--tw-text-opacity, 1));
+}
+
+.text-blue-600 {
+  --tw-text-opacity: 1;
+  color: rgb(37 99 235 / var(--tw-text-opacity, 1));
 }
 
 .text-card-foreground {

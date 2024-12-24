@@ -1,8 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
-
 import {
   Card,
   CardContent,
@@ -12,16 +10,14 @@ import {
 } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
 
-// Define the type for a question
 type QuestionData = {
   question: string;
-  stress: string; // "Not Stressed" or "Stressed"
-  confidence: number; // Positive number
+  stress: string;
+  confidence: number; 
 };
 
 interface StressBarChartProps {
-  newQuestion?: QuestionData; // Optional prop for new question
-  currentIndex: number; // Index of the current question
+  allStressData: QuestionData[]; 
 }
 
 const chartConfig = {
@@ -31,34 +27,18 @@ const chartConfig = {
   },
 };
 
-export function StressBarChart({ newQuestion, currentIndex }: StressBarChartProps) {
-  const [stressData, setStressData] = useState<QuestionData[]>([]);
+export function StressBarChart({ allStressData }: StressBarChartProps) {
+  const processedData = allStressData.map((item, idx) => {
+    const adjustedConfidence =
+      item.stress === "Not Stressed"
+        ? Math.max(100 - item.confidence, 5)
+        : Math.max(100 + item.confidence, 5);
 
-  useEffect(() => {
-    if (newQuestion) {
-      setStressData((prevData) => {
-        const updatedData = [...prevData];
-        updatedData[currentIndex] = {
-          question: `Q${currentIndex + 1}`,
-          stress: newQuestion.stress,
-          confidence:
-            newQuestion.stress === "Not Stressed"
-              ? Math.max(100 - newQuestion.confidence, 5)
-              : Math.max(100 + newQuestion.confidence, 5),
-        };
-        return updatedData;
-      });
-    }
-  }, [newQuestion, currentIndex]);
-
-  const processedData = Array.from({ length: currentIndex + 1 }, (_, index) => {
-    return (
-      stressData[index] || {
-        question: `Q${index + 1}`,
-        stress: "Uninitialized",
-        confidence: 2.5, // Default value for uninitialized data
-      }
-    );
+    return {
+      question: `Q${idx + 1}`, 
+      stress: item.stress,
+      confidence: adjustedConfidence,
+    };
   });
 
   return (
@@ -70,11 +50,7 @@ export function StressBarChart({ newQuestion, currentIndex }: StressBarChartProp
       <CardContent className="flex-1 flex justify-start items-center">
         <div className="w-[90%] h-[250px] max-w-[400px]">
           <ChartContainer config={chartConfig} className="max-h-[225px] min-w-[600px]">
-            <BarChart
-              width={400}
-              height={250}
-              data={processedData}
-            >
+            <BarChart width={400} height={250} data={processedData}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
               <XAxis
                 type="category"
@@ -103,7 +79,7 @@ export function StressBarChart({ newQuestion, currentIndex }: StressBarChartProp
                         ? "hsl(var(--chart-green))"
                         : item.stress === "Stressed"
                         ? "hsl(var(--chart-red))"
-                        : "hsl(var(--chart-gray))" // Gray for uninitialized data
+                        : "hsl(var(--chart-gray))"
                     }
                   />
                 ))}
