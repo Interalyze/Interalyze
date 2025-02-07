@@ -152,3 +152,14 @@ CORS_ALLOWED_ORIGINS = [
 # Allow credentials (optional, only if required)
 CORS_ALLOW_CREDENTIALS = True
 LOGIN_REDIRECT_URL = '/'
+
+# Email Backend
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For testing
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Uncomment for production
+
+# SMTP Settings for production (e.g., Gmail)
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'interalyze@gmail.com'
+EMAIL_HOST_PASSWORD = 'Interalyze_24Proje'
