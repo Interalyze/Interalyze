@@ -68,38 +68,38 @@ def analyze_personality(request):
 # GIVES ALL SKILLS
 @csrf_exempt
 def analyze_skills(request):
-    """
-    API endpoint to analyze skills from the provided text.
-    """
     if request.method == "POST":
         try:
-            # Parse the input text from the request body
             body = json.loads(request.body)
             input_text = body.get("text", "")
-
             if not input_text:
                 return JsonResponse({"error": "No text provided"}, status=400)
 
-            # Initialize the SkillAnalyzer and get results
             skill_analyzer = AllSkillsAnalyzer()
             annotations = skill_analyzer.analyze_text(input_text)
 
-            # Format the skills into a user-friendly structure
             extracted_skills = []
-            for skill in annotations["results"]["ngram_scored"]:
-                extracted_skills.append({
-                    "skill_name": skill["doc_node_value"],
-                    "confidence": round(float(skill["score"]), 2),  # Convert score to Python float
-                })
+            try:
+                for skill in annotations["results"]["ngram_scored"]:
+                    extracted_skills.append({
+                        "skill_name": skill["doc_node_value"],
+                        "confidence": round(float(skill["score"]), 2),
+                    })
+            except KeyError as e:
+                print(f"KeyError: {e}")
+                return JsonResponse({"error": "Invalid annotations structure"}, status=500)
 
-
-            # Return the extracted skills
             return JsonResponse({"extracted_skills": extracted_skills}, status=200)
 
+        except json.JSONDecodeError as e:
+            print(f"JSONDecodeError: {e}")
+            return JsonResponse({"error": "Invalid JSON format"}, status=400)
         except Exception as e:
+            print(f"Unexpected error: {e}")
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
 
 
 #  GIVES ONLY SOFT SKILLS

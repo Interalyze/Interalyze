@@ -162,3 +162,6 @@ cython_debug/
 #.idea/
 
 node_modules/
+
+#any mp4 file
+*.mp4
