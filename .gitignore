@@ -163,5 +163,6 @@ cython_debug/
 
 node_modules/
 
+.next/
 #any mp4 file
 *.mp4
